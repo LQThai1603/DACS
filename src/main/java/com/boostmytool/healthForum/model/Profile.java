@@ -1,6 +1,6 @@
 package com.boostmytool.healthForum.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,29 +26,33 @@ public class Profile {
 	private String phoneNumber;
 	
 	@Column(name = "birthday")
-	private LocalDateTime birthDay;
+	private LocalDate birthDay;
+	
+	@Column(name = "sex")
+	private String sex;
+	
+	@Column(name = "avatar")
+	private String avatar;
 	
 	@OneToOne(mappedBy = "profile")
     private Account account;
 	
-	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, String name, String phoneNumber,
-			LocalDateTime birthDay) {
+	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 
+			String name, String 
+			phoneNumber,
+			LocalDate birthDay,
+			String sex,
+			String avatar) {
 		super();
 		this.userNameProfile = userNameProfile;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.birthDay = birthDay;
+		this.sex = sex;
+		this.avatar = avatar;
 	}
 	
 	public Profile() {}
-
-	public String getuserNameProfile() {
-		return userNameProfile;
-	}
-
-	public void setuserNameProfile(String userName) {
-		this.userNameProfile = userName;
-	}
 
 	public String getName() {
 		return name;
@@ -66,11 +70,44 @@ public class Profile {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public LocalDateTime getBirthDay() {
+	public LocalDate getBirthDay() {
 		return birthDay;
 	}
 
-	public void setBirthDay(LocalDateTime birthDay) {
+	public void setBirthDay(LocalDate birthDay) {
 		this.birthDay = birthDay;
 	}
+
+	public String getUserNameProfile() {
+		return userNameProfile;
+	}
+
+	public void setUserNameProfile(String userNameProfile) {
+		this.userNameProfile = userNameProfile;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
 }

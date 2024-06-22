@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
     <!-- Font Awesome CSS for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
+        /* General styling */
         .jumbotron {
             background-color: #f8f9fa;
             padding: 2rem 1rem;
@@ -19,9 +20,11 @@
         .jumbotron:hover {
             background-color: #e9ecef;
         }
+
         .navbar-custom {
             background-color: #007bff;
             transition: background-color 0.5s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .navbar-custom .navbar-brand,
         .navbar-custom .navbar-nav .nav-link {
@@ -33,19 +36,53 @@
         .navbar-custom.scrolled {
             background-color: #0056b3;
         }
-        .card-custom {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card-custom:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+        
         .navbar-brand {
             transition: transform 0.3s ease, color 0.3s ease;
         }
         .navbar-brand:hover {
             transform: scale(1.1);
             color: #ffc107;
+        }
+
+        /* Dropdown styling */
+        .dropdown-menu {
+            background-color: #007bff;
+            margin-left: -1rem; /* Lùi sang trái 1rem */
+        }
+        .dropdown-menu a.dropdown-item {
+            color: #fff;
+        }
+        .dropdown-menu a.dropdown-item:hover {
+            background-color: #0056b3;
+        }
+
+        /* Navbar toggler icon */
+        .navbar-toggler-icon {
+            background-color: #fff;
+        }
+        .navbar-toggler {
+            border-color: #fff;
+        }
+        .navbar-toggler:hover {
+            background-color: #0056b3;
+        }
+
+        /* Scroll animation */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -10%, 0);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* Navbar animation */
+        .navbar-custom {
+            animation: fadeInDown 0.5s;
         }
     </style>
 </head>
@@ -61,13 +98,21 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile">Profile</a>
+                    <a class="nav-link" href="/home/profile">Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/my-posts">My Posts</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Messages</a>
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -76,9 +121,8 @@
     <!-- Jumbotron -->
     <div class="jumbotron mt-5">
         <h1 class="display-4">Welcome to Health Forum!</h1>
-        <p class="lead">Your go-to community for health discussions, advice, and support.</p>
+        <p class="lead">Join the conversation, share your experiences, and get advice from fellow members.</p>
         <hr class="my-4">
-        <p>Join the conversation, share your experiences, and get advice from fellow members.</p>
         <a class="btn btn-primary btn-lg" href="/register" role="button">Join Now</a>
     </div>
 
@@ -132,6 +176,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        // Navbar scroll animation
         $(window).scroll(function() {
             if ($(this).scrollTop() > 50) {
                 $('.navbar-custom').addClass('scrolled');
