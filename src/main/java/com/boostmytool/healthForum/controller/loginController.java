@@ -62,8 +62,10 @@ public class loginController {
 	        return "redirect:/login";
 	    }
 	    
+	    redirectAttributes.addAttribute("userName", account.getPassWord());
+	    
         redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
-		return "redirect:home";
+		return "redirect:home/start";
 	}
 	
 	@GetMapping({"/login/register", "login/register"})
