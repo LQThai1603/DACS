@@ -37,6 +37,11 @@ public class HomeController {
 	public String showProfile(Model model) {
 		ProfileDto profileDto = new ProfileDto();
 		profileDto.setUserNameProfile(profile.getUserNameProfile());
+		profileDto.setName(profile.getName());
+		profileDto.setPhoneNumber(profile.getPhoneNumber());
+		profileDto.setSex(profile.getSex());
+		profileDto.setBirthDay(profile.getBirthDay());
+		profileDto.setAvatar(profile.getAvatar());
 		System.out.println(profileDto.getUserNameProfile());
 		model.addAttribute("profileDto", profileDto);
 		return "home/profile";

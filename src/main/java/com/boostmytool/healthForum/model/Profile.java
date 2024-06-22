@@ -38,8 +38,8 @@ public class Profile {
     private Account account;
 	
 	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 
-			String name, String 
-			phoneNumber,
+			String name, 
+			String phoneNumber,
 			LocalDate birthDay,
 			String sex,
 			String avatar) {
@@ -52,7 +52,14 @@ public class Profile {
 		this.avatar = avatar;
 	}
 	
-	public Profile() {}
+	public Profile() {
+		this.userNameProfile = "NouserNameProfile";
+		this.name = "NoName";
+		this.phoneNumber = "NoPhone";
+		this.birthDay = LocalDate.now();
+		this.sex = "Other";
+		this.avatar = "NoAvartar";
+	}
 
 	public String getName() {
 		return name;

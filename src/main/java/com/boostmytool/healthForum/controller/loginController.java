@@ -101,7 +101,7 @@ public class loginController {
 		
 		Account a = new Account(regiterDto.getUserName(), regiterDto.getPassWord(), regiterDto.getUserName());
 		Profile p = new Profile();
-		p.setuserNameProfile(a.getUserName());
+		p.setUserNameProfile(a.getUserName());
 		Prepo.save(p);
 		Arepo.save(a);
 		return "redirect:/login";
