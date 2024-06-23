@@ -1,5 +1,7 @@
 package com.boostmytool.healthForum.controller;
 
+import java.util.Optional;
+
 import javax.naming.Binding;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,9 @@ public class loginController {
 			return "login/index";
 		}
 		
+		Optional<Account> accountOpt = Arepo.findById(accountDto.getUserName());
+		System.out.println(accountOpt.isPresent());
 		account = Arepo.findById(accountDto.getUserName()).orElse(null);
-		
 		//kiểm tra tài khoản
 		if (account == null) {
 	        redirectAttributes.addFlashAttribute("error", "Tài khoản không tồn tại.");
@@ -62,10 +65,11 @@ public class loginController {
 	        return "redirect:/login";
 	    }
 	    
-	    redirectAttributes.addAttribute("userName", account.getPassWord());
-	    
+	    redirectAttributes.addAttribute("userName", account.getUserName());
+   
         redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
 		return "redirect:home/start";
+//		return "/login/index";
 	}
 	
 	@GetMapping({"/login/register", "login/register"})

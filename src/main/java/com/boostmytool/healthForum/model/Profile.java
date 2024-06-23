@@ -58,7 +58,7 @@ public class Profile {
 		this.phoneNumber = "NoPhone";
 		this.birthDay = LocalDate.now();
 		this.sex = "Other";
-		this.avatar = "NoAvartar";
+		this.avatar = "default.png";
 	}
 
 	public String getName() {

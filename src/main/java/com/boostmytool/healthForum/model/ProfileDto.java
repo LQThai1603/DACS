@@ -2,11 +2,13 @@ package com.boostmytool.healthForum.model;
 
 import java.time.LocalDate;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 
 public class ProfileDto {
-	@NotEmpty(message = "PassWord is required")
+	@NotEmpty(message = "UserNameProfile is required")
 	private String userNameProfile;
 	
 	private String name;
@@ -17,14 +19,14 @@ public class ProfileDto {
 	
 	private String sex;
 	
-	private String avatar;
+	private MultipartFile avatar;
 
 	public ProfileDto(@NotEmpty(message = "PassWord is required") String userNameProfile, 
 			String name,
 			@NotEmpty(message = "PhoneNumber is required") String phoneNumber, 
 			LocalDate birthDay,
 			String sex,
-			String avatar) {
+			MultipartFile avatar) {
 		super();
 		this.userNameProfile = userNameProfile;
 		this.name = name;
@@ -44,11 +46,11 @@ public class ProfileDto {
 		this.sex = sex;
 	}
 
-	public String getAvatar() {
+	public MultipartFile getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(String avatar) {
+	public void setAvatar(MultipartFile avatar) {
 		this.avatar = avatar;
 	}
 
