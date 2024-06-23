@@ -49,7 +49,7 @@ public class APIController {
 		return new ResponseEntity<List<Profile>>(profiles, HttpStatus.OK);
 	}
 	
-	@GetMapping("show/account/{userName}")
+	@GetMapping("show/profile/{userName}")
 	public ResponseEntity<Profile> getProfile (@PathVariable String userNameProfile){
 		Optional<Profile> profile = Prepo.findById(userNameProfile);
 		return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -63,6 +63,9 @@ public class APIController {
 		account.setUserName(accountDto.getUserName());
 		account.setPassWord(accountDto.getPassWord());
 		Account saveAccount = Arepo.save(account);
+		Profile profile = new Profile();
+		profile.setUserNameProfile(saveAccount.getUserName());
+		Prepo.save(profile);
 		return ResponseEntity.status(HttpStatus.CREATED).body(saveAccount);
 	}
 	

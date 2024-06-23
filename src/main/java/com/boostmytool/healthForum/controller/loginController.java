@@ -91,8 +91,6 @@ public class loginController {
 			return "login/registerForm";
 		}
 		
-		System.out.println(!regiterDto.getPassWord().equals(regiterDto.getConFirmPassWord()));
-		
 		if(Arepo.findById(regiterDto.getUserName()).orElse(null) != null) {
 			redirectAttributes.addFlashAttribute("error", "tài khoản đã tồn tại");
 			return "redirect:/login/register";
