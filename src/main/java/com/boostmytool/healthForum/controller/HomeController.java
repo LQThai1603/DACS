@@ -1,29 +1,39 @@
 package com.boostmytool.healthForum.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boostmytool.healthForum.model.Account;
+import com.boostmytool.healthForum.model.Post;
+import com.boostmytool.healthForum.model.PostDto;
 import com.boostmytool.healthForum.model.Profile;
 import com.boostmytool.healthForum.model.ProfileDto;
 import com.boostmytool.healthForum.service.AccountRepository;
+import com.boostmytool.healthForum.service.PostRepository;
 import com.boostmytool.healthForum.service.ProfileRepository;
 
 import jakarta.validation.Valid;
@@ -37,8 +47,10 @@ public class HomeController {
 	private AccountRepository Arepo;
 	@Autowired
 	private ProfileRepository Prepo;
+	@Autowired
+	private PostRepository Porepo;
 	@GetMapping({"start"})
-	public String showPostMainPage(@RequestParam String userName, RedirectAttributes redirectAttributes) {
+	public String showPostMainPage(@RequestParam String userName, RedirectAttributes redirectAttributes, Model model) {
 		Optional<Account> accountOpt = Arepo.findById(userName);
 	    if (!accountOpt.isPresent()) {
 	        redirectAttributes.addFlashAttribute("error", "Tài khoản không tồn tại....");
@@ -52,10 +64,16 @@ public class HomeController {
 	        return "redirect:/login";
 	    }
 	    profile = profileOpt.get();
+	    
+	    //create PostDto to add PostMain
+	    PostDto postDto = new PostDto();
+	    model.addAttribute("postDto", postDto);
 		return "redirect:/home";
 	}
 	@GetMapping({"", "/"})
-	public String showPostMainPage() {
+	public String showPostMainPage(Model model) {
+		PostDto postDto = new PostDto();
+	    model.addAttribute("postDto", postDto);
 		return "/home/postMain";
 	}
 	@GetMapping({"profile"})
@@ -105,5 +123,41 @@ public class HomeController {
 		model.addAttribute("avatarFile", profile.getAvatar());
 		Prepo.save(profile);
 		return "/home/profile";
+	}
+	
+	@PostMapping("post")
+	public String createPost(Model model,
+			@Valid @ModelAttribute PostDto postDto,
+			BindingResult result) {
+		if(postDto.getImage() == null || postDto.getImage().isEmpty()) {
+			result.addError(new FieldError("postDto", "image", "Image is required"));
+		}
+		
+		if(result.hasErrors()) {
+			return "redirect:/home";
+		}
+		
+		String upLoadDir = "public/post/";
+		
+		Post post = new Post();
+		post.setUserNameProfile(profile.getUserNameProfile());
+		post.setContent(postDto.getContent());
+		post.setTitle(postDto.getTitle());
+		
+		if(postDto.getImage() != null) {
+			MultipartFile postImage = postDto.getImage();
+			try(InputStream inputStream = postImage.getInputStream()){
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+				Files.copy(inputStream, Paths.get(upLoadDir + post.getUserNameProfile()+ " " + post.getTitle() + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				post.setImage(post.getUserNameProfile() + " " + post.getTitle() + LocalDateTime.now().format(formatter).toString() + ".png");
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		Porepo.save(post);
+		
+		return "redirect:/home";
 	}
 }

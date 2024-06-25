@@ -10,15 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         /* General styling */
-        .jumbotron {
-            background-color: #f8f9fa;
-            padding: 2rem 1rem;
-            border-radius: 0.3rem;
-            text-align: center;
-            transition: background-color 0.5s ease;
-        }
-        .jumbotron:hover {
-            background-color: #e9ecef;
+        body {
+            padding-top: 4.5rem; /* Fix navbar overlapping */
         }
 
         .navbar-custom {
@@ -84,6 +77,126 @@
         .navbar-custom {
             animation: fadeInDown 0.5s;
         }
+
+        /* Custom form styling */
+        .post-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1050; /* Ensure modal is above everything else */
+            width: 80%;
+            max-width: 600px;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.3rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            display: none; /* Hide initially */
+            animation: slideDown 0.5s forwards; /* Animation */
+        }
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -200%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        .post-form .form-group {
+            margin-bottom: 1rem;
+        }
+        .post-form .form-control {
+            border-radius: 0.25rem;
+        }
+        .post-form .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease;
+        }
+        .post-form .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .post-form .custom-file-label::after {
+            content: "Browse";
+        }
+        .post-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 40px;
+            margin-top: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .post-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .post-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-content {
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .like-button {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .like-button img {
+            width: 48px;
+            height: 48px;
+            transition: transform 0.2s;
+        }
+
+        .like-button img:hover {
+            transform: scale(1.1);
+        }
+
+        .like-button img:active {
+            transform: scale(0.9);
+        }
+
+        /* Overlay styling */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt 50% */
+            display: none; /* Ẩn ban đầu */
+            z-index: 1040; /* Z-index thấp hơn form để nằm phía dưới form */
+        }
     </style>
 </head>
 <body>
@@ -118,56 +231,62 @@
         </div>
     </nav>
 
-    <!-- Jumbotron -->
-    <div class="jumbotron mt-5">
-        <h1 class="display-4">Welcome to Health Forum!</h1>
-        <p class="lead">Join the conversation, share your experiences, and get advice from fellow members.</p>
-        <hr class="my-4">
-        <a class="btn btn-primary btn-lg" href="/register" role="button">Join Now</a>
-    </div>
-
     <!-- Content -->
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <h2 class="card-title">Latest Discussions</h2>
-                        <ul class="list-unstyled">
-                            <li><a href="/forum/topic/1">How to maintain a healthy diet?</a></li>
-                            <li><a href="/forum/topic/2">Best exercises for a busy schedule</a></li>
-                            <li><a href="/forum/topic/3">Mental health resources</a></li>
-                            <li><a href="/forum/topic/4">Dealing with chronic pain</a></li>
-                        </ul>
+        <!-- Heading -->
+        <div class="row mt-5">
+            <div class="col-md-12 text-center">
+                <p style="cursor: pointer; color: #007bff;" onclick="showPostForm()">Bạn có muốn đăng bài?</p>
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="hidePostForm()"></div>
+
+        <!-- Post Submission Form -->
+        <div id="postForm" class="post-form">
+            <button type="button" class="close" aria-label="Close" onclick="hidePostForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <form action="/home/post" method="POST" enctype="multipart/form-data" th:object="${postDto}">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" class="form-control" id="postTitle" name="title" placeholder="Enter the title" required th:field="${postDto.title}">
+                    <p th:if="${#fields.hasErrors('title')}" th:errorclass="text-danger" th:errors="${postDto.title}"></p>
+
+                </div>
+                <div class="form-group">
+                    <label for="postContent">Content</label>
+                    <textarea class="form-control" id="postContent" name="content" rows="4" placeholder="What's on your mind?" required th:field="${postDto.content}"></textarea>
+                    <p th:if="${#fields.hasErrors('content')}" th:errorclass="text-danger" th:errors="${postDto.content}"></p>
+                </div>
+                <div class="form-group">
+                    <label for="postImage">Upload Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="postImage" name="image" required th:field="${postDto.image}">
+                        <label class="custom-file-label" for="postImage">Choose file</label>
+                    	<p th:if="${#fields.hasErrors('image')}" th:errorclass="text-danger" th:errors="${postDto.image}"></p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <h2 class="card-title">Health Tips</h2>
-                        <ul class="list-unstyled">
-                            <li><a href="/tips/1">10 Tips for a healthier lifestyle</a></li>
-                            <li><a href="/tips/2">The benefits of regular exercise</a></li>
-                            <li><a href="/tips/3">How to manage stress effectively</a></li>
-                            <li><a href="/tips/4">Healthy eating on a budget</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom mb-4">
-                    <div class="card-body">
-                        <h2 class="card-title">Upcoming Events</h2>
-                        <ul class="list-unstyled">
-                            <li><a href="/events/1">Webinar: Nutrition Basics</a></li>
-                            <li><a href="/events/2">Yoga Class for Beginners</a></li>
-                            <li><a href="/events/3">Mental Health Awareness Week</a></li>
-                            <li><a href="/events/4">Healthy Cooking Workshop</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary btn-block">Post</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- post Form -->
+    <div class="post-container">
+        <div class="post-header">Post Title</div>
+        <div class="post-image-container">
+            <a href="image-url.html">
+                <img class="post-image" src="Th0865549016!.png" alt="Post Image">
+            </a>
+        </div>
+        <div class="post-content">This is the content of the post. It can be multiple lines long and contain various
+            types of content.</div>
+        <div class="post-actions">
+            <button class="like-button">
+                <img src="tim.png" alt="Like">
+            </button>
         </div>
     </div>
 
@@ -176,14 +295,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Navbar scroll animation
-        $(window).scroll(function() {
-            if ($(this).scrollTop() > 50) {
-                $('.navbar-custom').addClass('scrolled');
-            } else {
-                $('.navbar-custom').removeClass('scrolled');
+        // Function to show post form
+        function showPostForm() {
+            document.getElementById('postForm').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Function to hide post form
+        function hidePostForm() {
+            document.getElementById('postForm').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Close form when clicking outside of it
+        window.onclick = function(event) {
+            var postForm = document.getElementById('postForm');
+            var overlay = document.getElementById('overlay');
+            if (event.target == overlay) {
+                hidePostForm();
             }
-        });
+        };
     </script>
 </body>
 </html>

@@ -1,12 +1,14 @@
 package com.boostmytool.healthForum.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -36,6 +38,9 @@ public class Profile {
 	
 	@OneToOne(mappedBy = "profile")
     private Account account;
+	
+	@OneToMany(mappedBy = "profile")
+    private List<Post> posts;
 	
 	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 
 			String name, 
@@ -116,5 +121,11 @@ public class Profile {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
+	public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 }
