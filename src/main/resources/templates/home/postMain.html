@@ -141,6 +141,30 @@
             margin-bottom: 20px;
             text-align: left;
         }
+        
+        
+        
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .post-author-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-timestamp {
+            color: #777;
+        }
 
         .post-image-container {
             text-align: center;
@@ -274,21 +298,55 @@
     </div>
     
     <!-- post Form -->
-    <div class="post-container">
-        <div class="post-header">Post Title</div>
-        <div class="post-image-container">
-            <a href="image-url.html">
-                <img class="post-image" src="Th0865549016!.png" alt="Post Image">
-            </a>
+    <div th:each="post : ${posts}">
+		<div class="post-container">
+			<div class="post-author-info">
+				<a th:href="@{/home/viewProfile(userNameProfile=${post.userNameProfile})}">
+					<img class="post-author-avatar" th:src="@{'/avatar/' + ${post.avatar}}" alt="Post Image">
+				</a>
+	            <div>
+	                <span class="post-timestamp" th:text="${post.time.toString().substring(0,10)}"></span>
+	            </div>
+	        </div>
+	        <div class="post-header" th:text="${post.title}"></div>
+	        <div class="post-image-container">
+	            <a th:href="@{/home/viewPost(id=${post.id})}">
+	                <img class="post-image" th:src="@{'/post/' + ${post.image}}" alt="Post Image">
+	            </a>
+	        </div>
+	        <div class="post-content" th:text="${post.content}">
+	            types of content.</div>
+	        <div class="post-actions">
+	            <button class="like-button">
+	                <img src="/icon/tim.png" alt="Like">
+	            </button>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- Pagination -->
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/home(page=${currentPage - 1})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:href="@{/home(page=${i}, size=${size})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/home(page=${currentPage + 1})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="post-content">This is the content of the post. It can be multiple lines long and contain various
-            types of content.</div>
-        <div class="post-actions">
-            <button class="like-button">
-                <img src="tim.png" alt="Like">
-            </button>
-        </div>
-    </div>
+    
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

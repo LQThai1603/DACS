@@ -27,6 +27,9 @@ public class Post {
 	@Column(name = "time")
 	private LocalDateTime time;
 	
+	@Column(name = "avatar")
+	private String avatar;
+	
 	@ManyToOne
 	@JoinColumn(name = "usernameprofile", referencedColumnName = "usernameprofile", insertable = false, updatable = false)
 	private Profile profile;
@@ -36,7 +39,7 @@ public class Post {
 	private String userNameProfile;
 
 	public Post(@NotEmpty(message = "ID of Post is required") long id, String title, String content, String image,
-			String userNameProfile, LocalDateTime time) {
+			String userNameProfile, LocalDateTime time, String avatar) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -44,6 +47,7 @@ public class Post {
 		this.image = image;
 		this.userNameProfile = userNameProfile;
 		this.time = time;
+		this.avatar = avatar;
 	}
 	
 	public Post() {
@@ -52,14 +56,14 @@ public class Post {
 		this.time = LocalDateTime.now();
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-
-	public void setId(Long id) {
+	
+	public void setId(long id) {
 		this.id = id;
 	}
-
+	
 	public String getTitle() {
 		return title;
 	}
@@ -107,7 +111,14 @@ public class Post {
 	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
-	
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
 	
 	
 }

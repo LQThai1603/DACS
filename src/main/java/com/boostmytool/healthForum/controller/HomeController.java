@@ -13,6 +13,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -70,12 +74,24 @@ public class HomeController {
 	    model.addAttribute("postDto", postDto);
 		return "redirect:/home";
 	}
+	
 	@GetMapping({"", "/"})
-	public String showPostMainPage(Model model) {
-		PostDto postDto = new PostDto();
-	    model.addAttribute("postDto", postDto);
+	public String showPostMainPage(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size){
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> postPage = Porepo.findAll(pageable);
+		
+        PostDto postDto = new PostDto();
+        model.addAttribute("postDto", postDto);
+        
+	    model.addAttribute("posts", postPage.getContent());
+	    model.addAttribute("currentPage", postPage.getNumber());
+	    model.addAttribute("totalPages", postPage.getTotalPages());
+	    model.addAttribute("totalItems", postPage.getTotalElements());
 		return "/home/postMain";
 	}
+	
 	@GetMapping({"profile"})
 	public String showProfile(Model model) {
 		ProfileDto profileDto = new ProfileDto();
@@ -104,13 +120,15 @@ public class HomeController {
 		
 		//save avatar
 		MultipartFile newAvatar = profileDto.getAvatar();
-		try(InputStream inputStream = newAvatar.getInputStream()){
-			Files.copy(inputStream, Paths.get( upLoadDir + profile.getUserNameProfile() + ".png"), StandardCopyOption.REPLACE_EXISTING);
-			profile.setAvatar(profile.getUserNameProfile() + ".png");
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!newAvatar.isEmpty()) {
+			try(InputStream inputStream = newAvatar.getInputStream()){
+				Files.copy(inputStream, Paths.get( upLoadDir + profile.getUserNameProfile() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				profile.setAvatar(profile.getUserNameProfile() + ".png");
+			} 
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		profile.setBirthDay(profileDto.getBirthDay());
@@ -123,6 +141,21 @@ public class HomeController {
 		model.addAttribute("avatarFile", profile.getAvatar());
 		Prepo.save(profile);
 		return "/home/profile";
+	}
+	
+	@GetMapping("viewProfile")
+	public String viewProfile(Model model, @RequestParam String userNameProfile) {
+		if(profile.getUserNameProfile().equals(userNameProfile)) {
+			return "redirect:/home/profile";
+		}
+		if(!Prepo.findById(userNameProfile).isEmpty()) {
+			Profile pro = Prepo.findById(userNameProfile).get();
+
+			model.addAttribute("profile", pro);
+			return "/home/profileInformation";
+
+		}		
+		return "redirect:/home";
 	}
 	
 	@PostMapping("post")
@@ -155,9 +188,18 @@ public class HomeController {
 				System.out.println(e.getMessage());
 			}
 		}
-
+		post.setAvatar(profile.getAvatar());
+		
 		Porepo.save(post);
 		
 		return "redirect:/home";
+	}
+	
+	@GetMapping("viewPost")
+	public String viewPost(Model model,@RequestParam Long id) {
+
+		Post post = Porepo.findById(id).get();
+		model.addAttribute("post", post);
+		return "/home/postInformation";
 	}
 }
