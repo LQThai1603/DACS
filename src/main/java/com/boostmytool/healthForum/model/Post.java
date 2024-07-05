@@ -1,6 +1,7 @@
 package com.boostmytool.healthForum.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -38,6 +39,9 @@ public class Post {
 	@Column(name = "usernameprofile")
 	private String userNameProfile;
 
+	@OneToMany(mappedBy = "post")
+	private List<Comment> comment;
+	
 	public Post(@NotEmpty(message = "ID of Post is required") long id, String title, String content, String image,
 			String userNameProfile, LocalDateTime time, String avatar) {
 		super();

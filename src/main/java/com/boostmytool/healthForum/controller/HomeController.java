@@ -32,11 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boostmytool.healthForum.model.Account;
+import com.boostmytool.healthForum.model.Comment;
 import com.boostmytool.healthForum.model.Post;
 import com.boostmytool.healthForum.model.PostDto;
 import com.boostmytool.healthForum.model.Profile;
 import com.boostmytool.healthForum.model.ProfileDto;
 import com.boostmytool.healthForum.service.AccountRepository;
+import com.boostmytool.healthForum.service.CommentRepository;
 import com.boostmytool.healthForum.service.PostRepository;
 import com.boostmytool.healthForum.service.ProfileRepository;
 
@@ -53,6 +55,8 @@ public class HomeController {
 	private ProfileRepository Prepo;
 	@Autowired
 	private PostRepository Porepo;
+	@Autowired
+	private CommentRepository Crepo;
 	@GetMapping({"start"})
 	public String showPostMainPage(@RequestParam String userName, RedirectAttributes redirectAttributes, Model model) {
 		Optional<Account> accountOpt = Arepo.findById(userName);
@@ -77,8 +81,8 @@ public class HomeController {
 	
 	@GetMapping({"", "/"})
 	public String showPostMainPage(Model model,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "3") int size){
+				@RequestParam(defaultValue = "0") int page,
+				@RequestParam(defaultValue = "3") int size){
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
         Page<Post> postPage = Porepo.findAll(pageable);
 		
@@ -196,10 +200,36 @@ public class HomeController {
 	}
 	
 	@GetMapping("viewPost")
-	public String viewPost(Model model,@RequestParam Long id) {
+	public String viewPost(Model model,@RequestParam Long id,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size) {
 
 		Post post = Porepo.findById(id).get();
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Comment> commentPage = Crepo.findByFieldIdPost(id, pageable);
+		Comment comment = new Comment();
+        
+        model.addAttribute("currentPage", commentPage.getNumber());
+	    model.addAttribute("totalPages", commentPage.getTotalPages());
+	    model.addAttribute("totalItems", commentPage.getTotalElements());
+        model.addAttribute("comments", commentPage.getContent());
 		model.addAttribute("post", post);
+		model.addAttribute("cm", comment);
 		return "/home/postInformation";
+	}
+	
+	@PostMapping("viewPost")
+	public String viewPosts(Model model,@RequestParam Long id /*idPost*/, RedirectAttributes redirectAttributes,
+			@Valid @ModelAttribute Comment cm,
+			BindingResult result) {
+		redirectAttributes.addAttribute("id",id);
+		if(result.hasErrors()) {
+			return "redirect:/home/viewPost";
+		}
+		cm.setAvatar(profile.getAvatar());
+		cm.setIdPost(id);
+		cm.setUserNameProfile(profile.getUserNameProfile());
+		Crepo.save(cm);
+		return "redirect:/home/viewPost";
 	}
 }

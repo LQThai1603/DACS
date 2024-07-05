@@ -42,6 +42,9 @@ public class Profile {
 	@OneToMany(mappedBy = "profile")
     private List<Post> posts;
 	
+	@OneToMany(mappedBy = "profile")
+	private List<Comment> comment;
+	
 	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 
 			String name, 
 			String phoneNumber,
