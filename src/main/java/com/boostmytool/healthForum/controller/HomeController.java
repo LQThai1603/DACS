@@ -185,8 +185,8 @@ public class HomeController {
 			MultipartFile postImage = postDto.getImage();
 			try(InputStream inputStream = postImage.getInputStream()){
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-				Files.copy(inputStream, Paths.get(upLoadDir + post.getUserNameProfile()+ " " + post.getTitle() + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
-				post.setImage(post.getUserNameProfile() + " " + post.getTitle() + LocalDateTime.now().format(formatter).toString() + ".png");
+				Files.copy(inputStream, Paths.get(upLoadDir + post.getUserNameProfile()+ " " + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				post.setImage(post.getUserNameProfile() + " " + LocalDateTime.now().format(formatter).toString() + ".png");
 			} 
 			catch(Exception e) {
 				System.out.println(e.getMessage());
@@ -231,5 +231,29 @@ public class HomeController {
 		cm.setUserNameProfile(profile.getUserNameProfile());
 		Crepo.save(cm);
 		return "redirect:/home/viewPost";
+	}
+	
+	@GetMapping("mypostnav")
+	public String navigateMypost(RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("userName", profile.getUserNameProfile());
+		return "redirect:/home/mypost";
+	}
+	
+	@GetMapping("mypost")
+	public String viewMyPost(Model model, @RequestParam String userName,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> postPage = Porepo.findByUserNameProfile(userName, pageable);
+        PostDto postDto = new PostDto();
+        model.addAttribute("postDto", postDto);
+        model.addAttribute("userName", userName);
+	    model.addAttribute("posts", postPage.getContent());
+	    model.addAttribute("currentPage", postPage.getNumber());
+	    model.addAttribute("totalPages", postPage.getTotalPages());
+	    model.addAttribute("totalItems", postPage.getTotalElements());
+		
+		return "home/myPost";
 	}
 }

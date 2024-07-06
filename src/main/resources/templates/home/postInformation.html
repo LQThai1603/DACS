@@ -258,7 +258,7 @@
                     <a class="nav-link" href="/home/profile">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/my-posts">My Posts</a>
+                    <a class="nav-link" href="/home/mypostnav">My Posts</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -314,7 +314,7 @@
 	                	<a th:href="@{/home/viewProfile(userNameProfile=${comment.userNameProfile})}">
 							<img class="post-author-avatar" th:src="@{'/avatar/' + ${comment.avatar}}" alt="Post Image">
 						</a>
-		                <div class="post-timestamp" th:text="${comment.time.toString().substring(0,10) + '' + comment.time.toString().substring(11)}"></div>
+		                <div class="post-timestamp" th:text="${comment.time.toString().substring(0,10) + ' ' + comment.time.toString().substring(11)}"></div>
 	            		
 	            	</div>
                     <div class="comment-content" th:text="${comment.content}"></div>
