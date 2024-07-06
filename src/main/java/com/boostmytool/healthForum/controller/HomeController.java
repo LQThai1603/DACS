@@ -240,7 +240,7 @@ public class HomeController {
 	}
 	
 	@GetMapping("mypost")
-	public String viewMyPost(Model model, @RequestParam String userName,
+	public String viewMyPosts(Model model, @RequestParam String userName,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "3") int size,
 			RedirectAttributes redirectAttributes) {
@@ -255,5 +255,25 @@ public class HomeController {
 	    model.addAttribute("totalItems", postPage.getTotalElements());
 		
 		return "home/myPost";
+	}
+	
+	@GetMapping("deletepost")
+	public String deletePost(@RequestParam long id, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("userName", profile.getUserNameProfile());
+		
+		Post p = Porepo.findById(id).get();
+		
+		String upLoadDir = "public/post/";
+		File file = new File(upLoadDir + p.getImage());
+		if(file.exists()) {
+			System.out.println("image of post is deleted!");
+			file.delete();
+		}
+		//delete comment with this post
+		Crepo.deleteByFieldIdPost(id);
+		
+		//delete post
+		Porepo.deleteById(id);
+		return "redirect:/home/mypost";
 	}
 }

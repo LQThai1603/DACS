@@ -315,7 +315,9 @@
 					<i class="fas fa-ellipsis-v"></i>
 				</button>
 				<ul class="dropdown-menu">
-				 	<a class="dropdown-item" href="#"><i class="fas fa-trash"></i></a>
+					<!-- delete icon -->
+				 	<a class="dropdown-item" href="#" th:attr="onclick='confirmDeletePost(\'' + ${post.id} + '\')'"><i class="fas fa-trash"></i></a>
+				 	<!-- edit icon -->
 				 	<a class="dropdown-item" href="#"><i class="fas fa-edit"></i></i></a>
 				</ul>
 				</div>
@@ -367,6 +369,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
+		function confirmDeletePost(postId) {
+	        if (confirm("Are you sure you want to delete this post?")) {
+	            // Điều hướng đến phương thức xóa bài post
+	            window.location.href = "/home/deletepost?id=" + postId;
+	        } else {
+	            console.log("Delete canceled");
+	        }
+	    }
+	    
         // Function to show post form
         function showPostForm() {
             document.getElementById('postForm').style.display = 'block';
@@ -387,6 +398,7 @@
                 hidePostForm();
             }
         };
+        
     </script>
 </body>
 </html>
