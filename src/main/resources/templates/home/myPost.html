@@ -229,7 +229,7 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <a class="navbar-brand" href="/home">
+        <a class="navbar-brand" th:href="@{/home(userName=${userName})}">
             <i class="fas fa-heartbeat"></i> Health Forum
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -251,12 +251,25 @@
                         <a class="dropdown-item" href="#">Messages</a>
                         <a class="dropdown-item" href="#">Settings</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a class="dropdown-item" href="/home/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>
             </ul>
         </div>
     </nav>
+    
+    <!-- Search Form -->
+    <div class="container search-form">
+        <form th:action="@{/home/mypost/search}" method="get">
+            <div class="input-group column">
+                <input type="text" class="form-control" placeholder="Search title of post (LowerCase please!)" name="title" required>
+                <input type="hidden" name="userName" th:value="${userName}" required hidden>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Content -->
     <div class="container">

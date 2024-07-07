@@ -49,6 +49,7 @@ import jakarta.validation.Valid;
 public class HomeController {
 	private Account account = null;
 	private Profile profile = null;
+	
 	@Autowired
 	private AccountRepository Arepo;
 	@Autowired
@@ -57,6 +58,13 @@ public class HomeController {
 	private PostRepository Porepo;
 	@Autowired
 	private CommentRepository Crepo;
+	@GetMapping("logout")
+	public String logout(){
+		account = null;
+		profile = null;
+		return "redirect:/login";
+	}
+	
 	@GetMapping({"start"})
 	public String showPostMainPage(@RequestParam String userName, RedirectAttributes redirectAttributes, Model model) {
 		Optional<Account> accountOpt = Arepo.findById(userName);
@@ -73,6 +81,8 @@ public class HomeController {
 	    }
 	    profile = profileOpt.get();
 	    
+	    redirectAttributes.addAttribute("userName", account.getUserName());
+	    
 	    //create PostDto to add PostMain
 	    PostDto postDto = new PostDto();
 	    model.addAttribute("postDto", postDto);
@@ -80,9 +90,14 @@ public class HomeController {
 	}
 	
 	@GetMapping({"", "/"})
-	public String showPostMainPage(Model model,
+	public String showPostMainPage(Model model, @RequestParam String userName,
 				@RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "3") int size){
+		
+		if(Arepo.findById(userName).isEmpty()) {
+			return "redirect:/login";
+		}
+		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
         Page<Post> postPage = Porepo.findAll(pageable);
 		
@@ -93,6 +108,7 @@ public class HomeController {
 	    model.addAttribute("currentPage", postPage.getNumber());
 	    model.addAttribute("totalPages", postPage.getTotalPages());
 	    model.addAttribute("totalItems", postPage.getTotalElements());
+	    model.addAttribute("userName", account.getUserName());
 		return "/home/postMain";
 	}
 	
@@ -179,7 +195,7 @@ public class HomeController {
 		Post post = new Post();
 		post.setUserNameProfile(profile.getUserNameProfile());
 		post.setContent(postDto.getContent());
-		post.setTitle(postDto.getTitle());
+		post.setTitle(postDto.getTitle().toLowerCase());
 		
 		if(postDto.getImage() != null) {
 			MultipartFile postImage = postDto.getImage();
@@ -275,5 +291,44 @@ public class HomeController {
 		//delete post
 		Porepo.deleteById(id);
 		return "redirect:/home/mypost";
+	}
+	
+	@GetMapping("mypost/search")
+	public String searchMyPosts(Model model, @RequestParam String userName,
+			@RequestParam String title,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("userName", profile.getUserNameProfile());
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> postPage = Porepo.findByUserNameProfileAndTitle(userName, title, pageable);
+        System.out.println(postPage.getNumberOfElements());
+        PostDto postDto = new PostDto();
+        model.addAttribute("postDto", postDto);
+        model.addAttribute("userName", userName);
+	    model.addAttribute("posts", postPage.getContent());
+	    model.addAttribute("currentPage", postPage.getNumber());
+	    model.addAttribute("totalPages", postPage.getTotalPages());
+	    model.addAttribute("totalItems", postPage.getTotalElements());
+		model.addAttribute("title", title);
+		return "home/searchMyPost";
+	}
+	
+	@GetMapping("search")
+	public String searchPosts(Model model, @RequestParam String title,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> postPage = Porepo.findByTitle(title, pageable);
+        PostDto postDto = new PostDto();
+        model.addAttribute("postDto", postDto);
+        model.addAttribute("title", title);
+	    model.addAttribute("posts", postPage.getContent());
+	    model.addAttribute("currentPage", postPage.getNumber());
+	    model.addAttribute("totalPages", postPage.getTotalPages());
+	    model.addAttribute("totalItems", postPage.getTotalElements());
+	    
+		return "home/searchPost";
 	}
 }

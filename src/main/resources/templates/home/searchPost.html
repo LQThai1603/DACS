@@ -265,7 +265,7 @@
     
     <!-- Search Form -->
     <div class="container search-form">
-        <form th:action="@{/home/search(userName=)}" method="GET">
+        <form th:action="@{/home/search}" method="GET">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search posts...(Title of post)" name="title" required>
                 <input type="hidden" name="userName" th:value="${userName}" required hidden>
@@ -352,15 +352,15 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/home(page=${currentPage - 1}, size=${size})}" aria-label="Previous">
+                            <a class="page-link" th:href="@{/home(title=${title}, page=${currentPage - 1}, size=${size})}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
                         <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/home(page=${i}, size=${size})}" th:text="${i + 1}">1</a>
+                            <a class="page-link" th:href="@{/home(title=${title}, page=${i}, size=${size})}" th:text="${i + 1}">1</a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/home(page=${currentPage + 1}, size=${size})}" aria-label="Next">
+                            <a class="page-link" th:href="@{/home(title=${title}, page=${currentPage + 1}, size=${size})}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
