@@ -120,7 +120,8 @@ public class HomeController {
 		profileDto.setPhoneNumber(profile.getPhoneNumber());
 		profileDto.setSex(profile.getSex());
 		profileDto.setBirthDay(profile.getBirthDay());
-
+		
+		model.addAttribute("userName", account.getUserName());
 		model.addAttribute("profileDto", profileDto);
 		model.addAttribute("avatarFile",profile.getAvatar());
 		return "/home/profile";
@@ -164,7 +165,7 @@ public class HomeController {
 	}
 	
 	@GetMapping("viewProfile")
-	public String viewProfile(Model model, @RequestParam String userNameProfile) {
+	public String viewOtherProfile(Model model, @RequestParam String userNameProfile) {
 		if(profile.getUserNameProfile().equals(userNameProfile)) {
 			return "redirect:/home/profile";
 		}
@@ -172,9 +173,10 @@ public class HomeController {
 			Profile pro = Prepo.findById(userNameProfile).get();
 
 			model.addAttribute("profile", pro);
+			model.addAttribute("userName", userNameProfile);
 			return "/home/profileInformation";
 
-		}		
+		}
 		return "redirect:/home";
 	}
 	
@@ -271,6 +273,15 @@ public class HomeController {
 	    model.addAttribute("totalItems", postPage.getTotalElements());
 		
 		return "home/myPost";
+	}
+	
+	@GetMapping("editpost")
+	public String editPost(@RequestParam long id, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("userName", profile.getUserNameProfile());
+		
+		Post p = Porepo.findById(id).get();
+		//add String postImage
+		return "redirect:/home/mypost";
 	}
 	
 	@GetMapping("deletepost")

@@ -107,7 +107,7 @@
 	                            <img th:src="@{'/avatar/' + ${avatarFile}}" th:alt="${avatarFile}" id="avatarImage">
 	                            <input type="file" class="form-control" id="avatarInput" th:field="${profileDto.avatar}">
 	                            <label for="avatarInput" class="btn btn-primary">Upload Avatar</label>
-	                            <p th:if="${#fields.hasErrors('avatar')}" th:errorclass="text-danger" th:errors="${profileDto.avatar}"></p>
+	                            <p th:if="${#fields.hasErrors('avatar')}" th:errorclass="text-danger" accept=".png" th:errors="${profileDto.avatar}"></p>
 	                        </div>
                             <div class="form-group">
                                 <label for="userNameProfile">Username</label>

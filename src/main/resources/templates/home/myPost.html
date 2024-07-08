@@ -303,7 +303,7 @@
                 <div class="form-group">
                     <label for="postImage">Upload Image</label>
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="postImage" name="image" required th:field="${postDto.image}">
+                        <input type="file" class="custom-file-input" id="postImage" name="image" required accept=".png" th:field="${postDto.image}">
                         <label class="custom-file-label" for="postImage">Choose file</label>
                     	<p th:if="${#fields.hasErrors('image')}" th:errorclass="text-danger" th:errors="${postDto.image}"></p>
                     </div>
@@ -411,7 +411,6 @@
                 hidePostForm();
             }
         };
-        
     </script>
 </body>
 </html>
