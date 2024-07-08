@@ -77,8 +77,8 @@ public class APIController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(saveAccount);
 	}
 	
-	@PutMapping("edit/profile/{userNameProfile}")
-	public ResponseEntity<Profile> updateProfile( @PathVariable String userNameProfile,
+	@PostMapping("edit/profile/{userNameProfile}")
+	public ResponseEntity<Profile> updateProfile(@PathVariable String userNameProfile,
 			@Valid @RequestBody ProfileDto profileDto){
 		Optional<Profile> profileOpt = Prepo.findById(userNameProfile);
 		if(!profileOpt.isPresent()) {
@@ -107,6 +107,4 @@ public class APIController {
 		Profile updatedProfile = Prepo.save(profile);
 		return ResponseEntity.ok(updatedProfile);
 	}
-	
-	
 }

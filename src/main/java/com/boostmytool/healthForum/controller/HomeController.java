@@ -335,6 +335,7 @@ public class HomeController {
         PostDto postDto = new PostDto();
         model.addAttribute("postDto", postDto);
         model.addAttribute("title", title);
+        model.addAttribute("userName", account.getUserName());
 	    model.addAttribute("posts", postPage.getContent());
 	    model.addAttribute("currentPage", postPage.getNumber());
 	    model.addAttribute("totalPages", postPage.getTotalPages());
