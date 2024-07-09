@@ -275,13 +275,55 @@ public class HomeController {
 		return "home/myPost";
 	}
 	
-	@GetMapping("editpost")
-	public String editPost(@RequestParam long id, RedirectAttributes redirectAttributes) {
-		redirectAttributes.addAttribute("userName", profile.getUserNameProfile());
+	@GetMapping("mypost/editpost")
+	public String vieweditPost(Model model, @RequestParam long id) {
+		Post post = Porepo.findById(id).get();
+		PostDto postDto = new PostDto();
 		
-		Post p = Porepo.findById(id).get();
-		//add String postImage
-		return "redirect:/home/mypost";
+		System.out.println(post.getAvatar());
+		
+		postDto.setContent(post.getContent());
+		postDto.setTime(post.getTime());
+		postDto.setTitle(post.getTitle());
+		postDto.setUserNameProfile(post.getUserNameProfile());
+		
+		model.addAttribute("avatar", post.getAvatar());
+		model.addAttribute("image",post.getImage());
+		model.addAttribute("postDto", postDto);
+		model.addAttribute("id", id);
+		return "home/editMyPost";
+	}
+	
+	@PostMapping("mypost/editpost")
+	public String editPost(Model model, @RequestParam long id, 
+			@Valid @ModelAttribute PostDto postDto,
+			@Valid @ModelAttribute String avatar,
+			RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("id", id);
+		
+		String upLoadDir = "public/post/";
+		
+		Post p = new Post();
+	
+		p.setId(id);
+		p.setContent(postDto.getContent());
+		if(postDto.getImage() != null) {
+			MultipartFile postImage = postDto.getImage();
+			try(InputStream inputStream = postImage.getInputStream()){
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+				Files.copy(inputStream, Paths.get(upLoadDir + p.getUserNameProfile()+ " " + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				p.setImage(p.getUserNameProfile() + " " + LocalDateTime.now().format(formatter).toString() + ".png");
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		p.setTitle(postDto.getTitle());
+		
+		
+		int updateResult = Porepo.updateByIdPost(id, p.getTitle(), p.getContent(), p.getImage());
+		System.out.println("updateResult: " + updateResult);
+		return "redirect:/home/mypost/editpost";
 	}
 	
 	@GetMapping("deletepost")

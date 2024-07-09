@@ -331,7 +331,7 @@
 					<!-- delete icon -->
 				 	<a class="dropdown-item" href="#" th:attr="onclick='confirmDeletePost(\'' + ${post.id} + '\')'"><i class="fas fa-trash"></i></a>
 				 	<!-- edit icon -->
-				 	<a class="dropdown-item" href="#"><i class="fas fa-edit"></i></i></a>
+				 	<a class="dropdown-item" th:href="@{/home/mypost/editpost(id=${post.id})}"><i class="fas fa-edit"></i></i></a>
 				</ul>
 				</div>
 	        </div>

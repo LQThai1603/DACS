@@ -277,10 +277,10 @@
 
     <div class="container">
 		<div class="post-container">
-			<form action="/home/post" method="POST" enctype="multipart/form-data" th:object="${postDto}">
+			<form th:action="@{/home/mypost/editpost(id=${id})}" method="POST" enctype="multipart/form-data" th:object="${postDto}">
 				<div class="post-author-info form-group">
 	                <a th:href="@{/home/viewProfile(userNameProfile=${postDto.userNameProfile})}">
-						<img class="post-author-avatar" th:src="@{'/avatar/' + ${postDto.avatar}}" alt="Post Image">
+						<img class="post-author-avatar" th:src="@{'/avatar/' + ${avatar}}" alt="Post Image">
 					</a>
 	                <div>
 	                    <div class="post-timestamp" th:text="${postDto.time.toString().substring(0,10)}"></div>
@@ -295,11 +295,11 @@
 	            
 	            <div class="form-group">
 					<div class="post-image-container">
-		                <img class="post-image" th:src="@{'/post/' + ${postImage}}" alt="Post Image">
+		                <img class="post-image" th:src="@{'/post/' + ${image}}" alt="Post Image">
 		            </div>
 	                <label for="postImage">Upload Image</label>
 	                <div class="custom-file">
-	                    <input type="file" class="custom-file-input" accept=".png" th:field="${postDto.image}">
+	                    <input type="file" class="custom-file-input" accept=".png" required th:field="${postDto.image}">
 	                    <label class="custom-file-label" for="postImage">Choose file</label>
 	                </div>
 	            </div>
@@ -310,7 +310,7 @@
 	                <p th:if="${#fields.hasErrors('content')}" th:errorclass="text-danger" th:errors="${postDto.content}"></p>
 	            </div>
 	            
-	            <button type="submit" class="btn btn-primary btn-block">Post</button>
+	            <button type="submit" class="btn btn-primary btn-block" onclick="return confirmUpdate()">Update Post</button>
 	        </form>
 		</div>
         
@@ -319,5 +319,11 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+    function confirmUpdate() {
+        var confirmed = confirm("Are you sure to update Post?");
+        return confirmed;
+    }
+</script>
 </body>
 </html>

@@ -108,4 +108,26 @@ public class loginController {
 		Arepo.save(a);
 		return "redirect:/login";
 	}
+	
+	@GetMapping({"/login/forgotAccount", "login/forgotAccount"})
+	public String showForgotAccountPage(Model model) {
+		RegisterDto registerDto  = new RegisterDto();
+		String phoneNumber = "";
+		
+		model.addAttribute("registerDto", registerDto);
+		model.addAttribute("phoneNumber", phoneNumber);
+		return "login/forgotAccount";
+	}
+	
+	@PostMapping({"/login/forgotAccount", "login/forgotAccount"})
+	public String updatePassWord(Model model, 
+			@Valid @ModelAttribute RegisterDto regiterDto,
+			@Valid @ModelAttribute String phoneNumber,
+			BindingResult result) {
+		if(regiterDto.getPassWord().equals(regiterDto.getConFirmPassWord())) {
+			Arepo.forgotPassWord(regiterDto.getUserName(), regiterDto.getPassWord(), phoneNumber);
+			return "redirect:/login";
+		}
+		return "login/forgotAccount";
+	}
 }

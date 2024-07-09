@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class PostDto {
 	private long id;
@@ -16,6 +17,7 @@ public class PostDto {
 	@NotEmpty(message = "content of Post is required")
 	private String content;
 	
+	@NotNull(message = "Image of Post is required")
 	private MultipartFile image;
 	
 	private LocalDateTime time;

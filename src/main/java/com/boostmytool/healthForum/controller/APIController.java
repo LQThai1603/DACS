@@ -26,6 +26,8 @@ import com.boostmytool.healthForum.model.AccountDto;
 import com.boostmytool.healthForum.model.Profile;
 import com.boostmytool.healthForum.model.ProfileDto;
 import com.boostmytool.healthForum.service.AccountRepository;
+import com.boostmytool.healthForum.service.CommentRepository;
+import com.boostmytool.healthForum.service.PostRepository;
 import com.boostmytool.healthForum.service.ProfileRepository;
 
 import jakarta.validation.Valid;
@@ -38,6 +40,12 @@ public class APIController {
 	
 	@Autowired
 	private ProfileRepository Prepo;
+	
+	@Autowired
+	private PostRepository Porepo;
+	
+	@Autowired
+	private CommentRepository Crepo;
 	
 	@GetMapping("show/accounts")
 	public ResponseEntity<List<Account>> getAllAccount(){
@@ -68,8 +76,8 @@ public class APIController {
 			@Valid @RequestBody AccountDto accountDto /*//chuyển đổi JSON được gửi bởi client thành đối tượng AccountDto*/){
 		
 		Account account = new Account();
-		account.setUserName(accountDto.getUserName());
-		account.setPassWord(accountDto.getPassWord());
+		account.setUserName(accountDto.getUserName().trim());
+		account.setPassWord(accountDto.getPassWord().trim());
 		Account saveAccount = Arepo.save(account);
 		Profile profile = new Profile();
 		profile.setUserNameProfile(saveAccount.getUserName());
@@ -100,9 +108,9 @@ public class APIController {
 		}
 		
 		profile.setBirthDay(profileDto.getBirthDay());
-		profile.setName(profileDto.getName());
-		profile.setPhoneNumber(profileDto.getPhoneNumber());
-		profile.setSex(profileDto.getSex());
+		profile.setName(profileDto.getName().trim());
+		profile.setPhoneNumber(profileDto.getPhoneNumber().trim());
+		profile.setSex(profileDto.getSex().trim());
 		
 		Profile updatedProfile = Prepo.save(profile);
 		return ResponseEntity.ok(updatedProfile);
