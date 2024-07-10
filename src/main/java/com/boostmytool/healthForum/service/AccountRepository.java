@@ -16,6 +16,5 @@ public interface AccountRepository extends JpaRepository<Account, String>{
 	       "  SELECT p FROM Profile p " +
 	       "  WHERE p.userNameProfile = :userName " +
 	       "  AND p.phoneNumber = :phoneNumber)")
-	 int forgotPassWord(String userName, String passWord, String phoneNumber);
-	 
+	 int forgotPassWord(String userName, String passWord, String phoneNumber);	 
 }

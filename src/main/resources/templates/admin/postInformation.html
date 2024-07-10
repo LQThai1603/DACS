@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post with Comments</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 4.5rem;
+        }
+
+        .navbar-custom {
+            background-color: #007bff;
+            transition: background-color 0.5s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #ffc107;
+        }
+        .navbar-custom.scrolled {
+            background-color: #0056b3;
+        }
+
+        .navbar-brand {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.1);
+            color: #ffc107;
+        }
+
+        .dropdown-menu {
+            background-color: #007bff;
+            margin-left: -1rem;
+        }
+        .dropdown-menu a.dropdown-item {
+            color: #fff;
+        }
+        .dropdown-menu a.dropdown-item:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #fff;
+        }
+        .navbar-toggler {
+            border-color: #fff;
+        }
+        .navbar-toggler:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -10%, 0);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .navbar-custom {
+            animation: fadeInDown 0.5s;
+        }
+
+        .post-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 40px;
+            margin-top: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .post-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .post-author-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-timestamp {
+            color: #777;
+        }
+
+        .post-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-content {
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .like-button {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .like-button img {
+            width: 48px;
+            height: 48px;
+            transition: transform 0.2s;
+        }
+
+        .like-button img:hover {
+            transform: scale(1.1);
+        }
+
+        .like-button img:active {
+            transform: scale(0.9);
+        }
+
+        .comment-section {
+            max-width: 600px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        .comment-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .comment-content {
+            margin-bottom: 10px;
+        }
+
+        .comment-form {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+        }
+
+        .comment-form .form-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .comment-form .form-group textarea {
+            resize: none;
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .comment-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .comment-button i {
+            font-size: 1.2em;
+        }
+
+        .comment-button:hover {
+            background-color: #0056b3;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .page-link {
+            color: #007bff;
+        }
+
+        .page-link:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <a class="navbar-brand" th:href="@{/admin(userName=${userName})}">
+            <i class="fas fa-heartbeat"></i> Health Forum
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/profile">Profiles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admdin/mypostnav">My Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Accounts</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Messages</a>
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/home/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="post-container">
+            <div class="post-author-info">
+                <a th:href="@{/admin/profile(userNameProfile=${post.userNameProfile})}">
+					<img class="post-author-avatar" th:src="@{'/avatar/' + ${post.avatar}}" alt="Post Image">
+				</a>
+                <div>
+                    <div class="post-timestamp" th:text="${post.time.toString().substring(0,10)}"></div>
+                </div>
+            </div>
+            <div class="post-header" th:text="${post.title}"></div>
+            <div class="post-image-container">
+                <img class="post-image" th:src="@{'/post/' + ${post.image}}" alt="Post Image">
+            </div>
+            <div class="post-content" th:text="${post.content}"></div>
+            <div class="post-actions">
+                <button class="like-button">
+                    <img src="/icon/tim.png" alt="Like">
+                </button>
+            </div>
+        </div>
+
+        <div class="comment-section">
+            <form class="comment-form" th:action="@{/admin/viewPost(id=${post.id})}" method="post" th:object="${cm}">
+                <div class="form-group">
+                    <textarea class="form-control" rows="1" placeholder="Write your comment here..." th:field="${cm.content}"></textarea>
+                    <p th:if="${#fields.hasErrors('content')}" th:errorclass="text-danger" th:errors="${cm.content}"></p>
+                    <button type="submit" class="comment-button">
+                        <i class="fas fa-comment"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <div th:each="comment : ${comments}">
+                <div class="comment-container">
+					<div class="post-author-info">
+	                	<a th:href="@{/admin/profile(userNameProfile=${comment.userNameProfile})}">
+							<img class="post-author-avatar" th:src="@{'/avatar/' + ${comment.avatar}}" alt="Post Image">
+						</a>
+		                <div class="post-timestamp" th:text="${comment.time.toString().substring(0,10) + ' ' + comment.time.toString().substring(11)}"></div>
+	            		
+	            	</div>
+                    <div class="comment-content" th:text="${comment.content}"></div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+		    <div class="pagination">
+			    <ul class="pagination">
+			        <li class="page-item" th:if="${currentPage != null}" th:classappend="${currentPage == 0} ? 'disabled'">
+			            <a class="page-link" th:href="@{/admin/viewPost(id=${post.id}, page=${currentPage - 1}, size=${size})}">&laquo; Previous</a>
+			        </li>
+			        <li class="page-item" th:each="page : ${#numbers.sequence(0, totalPages - 1)}" th:if="${currentPage != null}" th:classappend="${page} == ${currentPage} ? 'active'">
+			            <a class="page-link" th:href="@{/admin/viewPost(id=${post.id}, page=${page}, size=${size})}" th:text="${page + 1}">1</a>
+			        </li>
+			        <li class="page-item" th:if="${currentPage != null}" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+			            <a class="page-link" th:href="@{/admin/viewPost(id=${post.id}, page=${currentPage + 1}, size=${size})}">Next &raquo;</a>
+			        </li>
+			    </ul>
+			</div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

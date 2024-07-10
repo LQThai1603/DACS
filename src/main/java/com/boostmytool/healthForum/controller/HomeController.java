@@ -161,7 +161,7 @@ public class HomeController {
 		model.addAttribute("profile", profile);
 		model.addAttribute("avatarFile", profile.getAvatar());
 		Prepo.save(profile);
-		return "/home/profile";
+		return "redirect:/home/profile";
 	}
 	
 	@GetMapping("viewProfile")
@@ -174,6 +174,7 @@ public class HomeController {
 
 			model.addAttribute("profile", pro);
 			model.addAttribute("userName", userNameProfile);
+			model.addAttribute("avatarFile", pro.getAvatar());
 			return "/home/profileInformation";
 
 		}
@@ -214,6 +215,8 @@ public class HomeController {
 		
 		Porepo.save(post);
 		
+		model.addAttribute("userName", account.getUserName());
+		
 		return "redirect:/home";
 	}
 	
@@ -233,6 +236,7 @@ public class HomeController {
         model.addAttribute("comments", commentPage.getContent());
 		model.addAttribute("post", post);
 		model.addAttribute("cm", comment);
+		model.addAttribute("userName", account.getUserName());
 		return "/home/postInformation";
 	}
 	
@@ -242,6 +246,9 @@ public class HomeController {
 			BindingResult result) {
 		redirectAttributes.addAttribute("id",id);
 		if(result.hasErrors()) {
+			result.getAllErrors().forEach(error -> {
+	            redirectAttributes.addFlashAttribute("error", error.getDefaultMessage());
+	        });
 			return "redirect:/home/viewPost";
 		}
 		cm.setAvatar(profile.getAvatar());
@@ -291,6 +298,7 @@ public class HomeController {
 		model.addAttribute("image",post.getImage());
 		model.addAttribute("postDto", postDto);
 		model.addAttribute("id", id);
+		model.addAttribute("userName", account.getUserName());
 		return "home/editMyPost";
 	}
 	

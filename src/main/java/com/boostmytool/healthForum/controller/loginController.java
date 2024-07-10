@@ -52,8 +52,6 @@ public class loginController {
 			return "login/index";
 		}
 		
-		Optional<Account> accountOpt = Arepo.findById(accountDto.getUserName());
-		System.out.println(accountOpt.isPresent());
 		account = Arepo.findById(accountDto.getUserName()).orElse(null);
 		//kiểm tra tài khoản
 		if (account == null) {
@@ -69,8 +67,11 @@ public class loginController {
 	    redirectAttributes.addAttribute("userName", account.getUserName());
    
         redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
+        
+        if(account.getUserName().equals("admin")) {
+        	return "redirect:admin/start";
+        }
 		return "redirect:home/start";
-//		return "/login/index";
 	}
 	
 	@GetMapping({"/login/register", "login/register"})
