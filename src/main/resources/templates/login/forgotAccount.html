@@ -16,22 +16,26 @@
                         <h3>Forgot Account</h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" th:object="${registerDto}">
+                        <form method="post" th:object="${forgotAccountDto}">
                             <div class="form-group">
                                 <label for="username">Username</label>
-                                <input type="text" class="form-control" th:field="${registerDto.userName}" required>
+                                <input type="text" class="form-control" th:field="${forgotAccountDto.userName}">
+                                <p th:if="${#fields.hasErrors('userName')}" th:errorclass="text-danger" th:errors="${forgotAccountDto.userName}"></p>
                             </div>
                             <div class="form-group">
                                 <label for="phoneNumber">Phone Number</label>
-                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:value="${phoneNumber}" required>
+                                <input type="tel" class="form-control" th:field="${forgotAccountDto.phoneNumber}">
+                                <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="text-danger" th:errors="${forgotAccountDto.phoneNumber}"></p>
                             </div>
                             <div class="form-group">
                                 <label for="newPassword">New Password</label>
-                                <input type="password" class="form-control" th:field="${registerDto.passWord}" required>
+                                <input type="password" class="form-control" th:field="${forgotAccountDto.passWord}">
+                                <p th:if="${#fields.hasErrors('passWord')}" th:errorclass="text-danger" th:errors="${forgotAccountDto.passWord}"></p>
                             </div>
                             <div class="form-group">
                                 <label for="confirmNewPassword">Confirm New Password</label>
-                                <input type="password" class="form-control" th:field="${registerDto.conFirmPassWord}" required>
+                                <input type="password" class="form-control" th:field="${forgotAccountDto.conFirmPassWord}">
+                                <p th:if="${#fields.hasErrors('conFirmPassWord')}" th:errorclass="text-danger" th:errors="${forgotAccountDto.conFirmPassWord}"></p>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Submit</button>
                         </form>

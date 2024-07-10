@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boostmytool.healthForum.model.Account;
 import com.boostmytool.healthForum.model.AccountDto;
+import com.boostmytool.healthForum.model.ForgotAccountDto;
 import com.boostmytool.healthForum.model.Profile;
 import com.boostmytool.healthForum.model.RegisterDto;
 import com.boostmytool.healthForum.service.AccountRepository;
@@ -82,7 +83,7 @@ public class loginController {
 	@PostMapping({"/login/register", "login/register"})
 	public String registerAccount(
 			Model model,
-			@Valid @ModelAttribute RegisterDto regiterDto, 
+			@Valid @ModelAttribute RegisterDto registerDto, 
 			BindingResult result,
 			RedirectAttributes redirectAttributes){
 		
@@ -91,17 +92,17 @@ public class loginController {
 			return "login/registerForm";
 		}
 		
-		if(Arepo.findById(regiterDto.getUserName()).orElse(null) != null) {
+		if(Arepo.findById(registerDto.getUserName()).orElse(null) != null) {
 			redirectAttributes.addFlashAttribute("error", "tài khoản đã tồn tại");
 			return "redirect:/login/register";
 		}
 		
-		if(!regiterDto.getPassWord().equals(regiterDto.getConFirmPassWord())) {
+		if(!registerDto.getPassWord().equals(registerDto.getConFirmPassWord())) {
 			redirectAttributes.addFlashAttribute("error", "Xác nhận mật khẩu không đúng!");
 			return "redirect:/login/register";
 		}
 		
-		Account a = new Account(regiterDto.getUserName(), regiterDto.getPassWord(), regiterDto.getUserName());
+		Account a = new Account(registerDto.getUserName(), registerDto.getPassWord(), registerDto.getUserName());
 		Profile p = new Profile();
 		p.setUserNameProfile(a.getUserName());
 		Prepo.save(p);
@@ -111,23 +112,29 @@ public class loginController {
 	
 	@GetMapping({"/login/forgotAccount", "login/forgotAccount"})
 	public String showForgotAccountPage(Model model) {
-		RegisterDto registerDto  = new RegisterDto();
+		ForgotAccountDto forgotAccountDto = new ForgotAccountDto();
 		String phoneNumber = "";
 		
-		model.addAttribute("registerDto", registerDto);
+		model.addAttribute("forgotAccountDto", forgotAccountDto);
 		model.addAttribute("phoneNumber", phoneNumber);
 		return "login/forgotAccount";
 	}
 	
 	@PostMapping({"/login/forgotAccount", "login/forgotAccount"})
 	public String updatePassWord(Model model, 
-			@Valid @ModelAttribute RegisterDto regiterDto,
-			@Valid @ModelAttribute String phoneNumber,
-			BindingResult result) {
-		if(regiterDto.getPassWord().equals(regiterDto.getConFirmPassWord())) {
-			Arepo.forgotPassWord(regiterDto.getUserName(), regiterDto.getPassWord(), phoneNumber);
+			@Valid @ModelAttribute ForgotAccountDto forgotAccountDto,
+			BindingResult result, RedirectAttributes redirectAttributes) {
+		model.addAttribute("registerDto", forgotAccountDto);
+		if(result.hasErrors()) {
+			System.out.println(result.getErrorCount());
+			return "login/forgotAccount";
+		}
+		
+		if(forgotAccountDto.getPassWord().equals(forgotAccountDto.getConFirmPassWord())) {
+			Arepo.forgotPassWord(forgotAccountDto.getUserName(), forgotAccountDto.getPassWord(), forgotAccountDto.getPhoneNumber());
 			return "redirect:/login";
 		}
+		
 		return "login/forgotAccount";
 	}
 }

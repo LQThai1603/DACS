@@ -8,12 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.boostmytool.healthForum.model.Account;
 
 public interface AccountRepository extends JpaRepository<Account, String>{
-	 @Modifying
-	 @Transactional
-	 @Query("UPDATE Account a SET a.userName = :userName, a.passWord = :passWord " +
-		       "WHERE a.userName = :userName " +
-		       "AND a.userNameProfile IN " +
-		       "(SELECT p.userNameProfile FROM Profile p WHERE p.userNameProfile = a.userNameProfile AND p.phoneNumber = :phoneNumber)")
+	@Modifying
+	@Transactional
+	@Query("UPDATE Account a SET a.passWord = :passWord " +
+	       "WHERE a.userName = :userName " +
+	       "AND EXISTS ( " +
+	       "  SELECT p FROM Profile p " +
+	       "  WHERE p.userNameProfile = :userName " +
+	       "  AND p.phoneNumber = :phoneNumber)")
 	 int forgotPassWord(String userName, String passWord, String phoneNumber);
 	 
 }
