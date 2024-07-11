@@ -3,6 +3,9 @@ package com.boostmytool.healthForum.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +35,7 @@ public class Post {
 	private String avatar;
 	
 	@ManyToOne
+	 @JsonBackReference
 	@JoinColumn(name = "usernameprofile", referencedColumnName = "usernameprofile", insertable = false, updatable = false)
 	private Profile profile;
 	
@@ -40,6 +44,7 @@ public class Post {
 	private String userNameProfile;
 
 	@OneToMany(mappedBy = "post")
+	@JsonManagedReference
 	private List<Comment> comment;
 	
 	public Post(@NotEmpty(message = "ID of Post is required") long id, String title, String content, String image,

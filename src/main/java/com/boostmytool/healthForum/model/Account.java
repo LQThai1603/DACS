@@ -1,5 +1,7 @@
 package com.boostmytool.healthForum.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class Account {
 	private String passWord;
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@JsonBackReference
 	@JoinColumn(name = "usernameprofile", referencedColumnName = "usernameprofile", insertable = false, updatable = false)
 	private Profile profile;
 	

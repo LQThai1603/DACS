@@ -130,7 +130,7 @@ public class AdminController {
 	@PostMapping("post")
 	public String createPost(Model model,
 			@Valid @ModelAttribute PostDto postDto,
-			BindingResult result) {
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if(postDto.getImage() == null || postDto.getImage().isEmpty()) {
 			result.addError(new FieldError("postDto", "image", "Image is required"));
 		}
@@ -162,7 +162,7 @@ public class AdminController {
 		Porepo.save(post);
 		
 		model.addAttribute("userName", account.getUserName());
-		
+		redirectAttributes.addAttribute("userName", account.getUserName());
 		return "redirect:/admin";
 	}
 	
@@ -247,6 +247,7 @@ public class AdminController {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
         Page<Comment> commentPage = Crepo.findByFieldIdPost(id, pageable);
 		Comment comment = new Comment();
+			
         
         model.addAttribute("currentPage", commentPage.getNumber());
 	    model.addAttribute("totalPages", commentPage.getTotalPages());
@@ -339,5 +340,56 @@ public class AdminController {
 			profile = p;
 		}
 		return "redirect:/admin/profile";
+	}
+	
+	@GetMapping("mypost")
+	public String viewMyPosts(Model model, @RequestParam String userName,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> postPage = Porepo.findByUserNameProfile(userName, pageable);
+        PostDto postDto = new PostDto();
+        model.addAttribute("postDto", postDto);
+        model.addAttribute("userName", userName);
+	    model.addAttribute("posts", postPage.getContent());
+	    model.addAttribute("currentPage", postPage.getNumber());
+	    model.addAttribute("totalPages", postPage.getTotalPages());
+	    model.addAttribute("totalItems", postPage.getTotalElements());
+		
+		return "admin/postMain";
+	}
+	
+	@GetMapping("profiles")
+	public String viewProfiles(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Profile> profilePage = Prepo.findAll(pageable);
+		
+		model.addAttribute("userName", account.getUserName());
+	    model.addAttribute("profiles", profilePage.getContent());
+	    model.addAttribute("currentPage", profilePage.getNumber());
+	    model.addAttribute("totalPages", profilePage.getTotalPages());
+	    model.addAttribute("totalItems", profilePage.getTotalElements());
+		return "/admin/profiles";
+	}
+	
+	@GetMapping("profiles/search")
+	public String searchProfiles(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			@RequestParam String userNameProfile,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Profile> profilePage = Prepo.findByUserNameProfile(userNameProfile, pageable);
+		
+		model.addAttribute("userName", account.getUserName());
+	    model.addAttribute("profiles", profilePage.getContent());
+	    model.addAttribute("currentPage", profilePage.getNumber());
+	    model.addAttribute("totalPages", profilePage.getTotalPages());
+	    model.addAttribute("totalItems", profilePage.getTotalElements());
+		return "/admin/profiles";
 	}
 }

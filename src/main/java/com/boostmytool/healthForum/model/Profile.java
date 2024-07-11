@@ -3,6 +3,8 @@ package com.boostmytool.healthForum.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,12 +39,15 @@ public class Profile {
 	private String avatar;
 	
 	@OneToOne(mappedBy = "profile")
+	@JsonManagedReference
     private Account account;
 	
 	@OneToMany(mappedBy = "profile")
+	@JsonManagedReference
     private List<Post> posts;
 	
 	@OneToMany(mappedBy = "profile")
+	@JsonManagedReference
 	private List<Comment> comment;
 	
 	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 

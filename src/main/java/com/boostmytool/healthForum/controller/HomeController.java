@@ -184,7 +184,7 @@ public class HomeController {
 	@PostMapping("post")
 	public String createPost(Model model,
 			@Valid @ModelAttribute PostDto postDto,
-			BindingResult result) {
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if(postDto.getImage() == null || postDto.getImage().isEmpty()) {
 			result.addError(new FieldError("postDto", "image", "Image is required"));
 		}
@@ -215,8 +215,7 @@ public class HomeController {
 		
 		Porepo.save(post);
 		
-		model.addAttribute("userName", account.getUserName());
-		
+		redirectAttributes.addAttribute("userName", account.getUserName());
 		return "redirect:/home";
 	}
 	

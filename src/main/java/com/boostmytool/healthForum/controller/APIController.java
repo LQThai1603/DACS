@@ -65,11 +65,11 @@ public class APIController {
 		return new ResponseEntity<List<Profile>>(profiles, HttpStatus.OK);
 	}
 	
-	@GetMapping("show/profile/{userName}")
-	public ResponseEntity<Profile> getProfile (@PathVariable String userNameProfile){
-		Optional<Profile> profile = Prepo.findById(userNameProfile);
-		return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-	}
+	@GetMapping("show/profile/{userNameProfile}")
+    public ResponseEntity<Profile> getProfileById(@PathVariable String userNameProfile) {
+        Optional<Profile> profile = Prepo.findById(userNameProfile);
+        return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 	
 	@PostMapping("create/account")
 	public ResponseEntity<Account> createAccount(

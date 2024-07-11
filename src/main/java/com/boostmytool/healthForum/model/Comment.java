@@ -2,6 +2,8 @@ package com.boostmytool.healthForum.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class Comment {
 	private long id;
 	
 	@ManyToOne
+	 @JsonBackReference
 	@JoinColumn(name = "usernameprofile", referencedColumnName = "usernameprofile", insertable = false, updatable = false)
 	private Profile profile;
 	
@@ -29,6 +32,7 @@ public class Comment {
 	private String userNameProfile;
 	
 	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "idpost", referencedColumnName = "id", insertable = false, updatable = false)
 	private Post post;
 	
