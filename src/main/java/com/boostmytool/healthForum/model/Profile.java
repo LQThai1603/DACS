@@ -136,4 +136,14 @@ public class Profile {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+
+	public List<Comment> getComment() {
+		return comment;
+	}
+
+	public void setComment(List<Comment> comment) {
+		this.comment = comment;
+	}
+    
+    
 }

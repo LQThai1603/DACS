@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -391,5 +392,60 @@ public class AdminController {
 	    model.addAttribute("totalPages", profilePage.getTotalPages());
 	    model.addAttribute("totalItems", profilePage.getTotalElements());
 		return "/admin/profiles";
+	}
+	
+	@GetMapping("accounts")
+	public String viewAccounts(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "6") int size,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Account> accountPage = Arepo.findAll(pageable);
+		
+		model.addAttribute("userName", account.getUserName());
+	    model.addAttribute("accounts", accountPage.getContent());
+	    model.addAttribute("currentPage", accountPage.getNumber());
+	    model.addAttribute("totalPages", accountPage.getTotalPages());
+	    model.addAttribute("totalItems", accountPage.getTotalElements());
+		return "/admin/accounts";
+	}
+	
+	@GetMapping("accounts/search")
+	public String searchAccounts(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
+			@RequestParam String userNameAccount,
+			RedirectAttributes redirectAttributes) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Account> accountPage = Arepo.findByUserName(userNameAccount, pageable);
+		
+		model.addAttribute("userName", account.getUserName());
+	    model.addAttribute("accounts", accountPage.getContent());
+	    model.addAttribute("currentPage", accountPage.getNumber());
+	    model.addAttribute("totalPages", accountPage.getTotalPages());
+	    model.addAttribute("totalItems", accountPage.getTotalElements());
+		return "/admin/accounts";
+	}
+	
+	@GetMapping("accounts/deleteaccount")
+	public String deleteAccount(@RequestParam String userName) {
+		Account a = Arepo.findById(userName).get();
+		
+		Profile p = Prepo.findById(a.getUserNameProfile()).get();
+		
+		List<Comment> cm = p.getComment();
+		for(Comment comment : cm) {
+			Crepo.delete(comment);
+		}
+		
+		List<Post> po = p.getPosts();
+		for(Post post : po) {
+			Crepo.deleteByFieldIdPost(post.getId());
+			Porepo.deleteById(post.getId());
+		}
+		
+		Arepo.delete(a);
+		Prepo.delete(p);
+		return "redirect:/admin/accounts";
 	}
 }
