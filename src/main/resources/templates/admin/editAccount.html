@@ -168,12 +168,6 @@
         .post-timestamp {
             color: #777;
         }
-        
-        .post-userName {
-            font-size: 0.875em; /* Adjust the font size as needed */
-            color: #333; /* Optional: Adjust the text color */
-            margin-bottom: 20px	;
-        }
 
         .post-image-container {
             text-align: center;
@@ -266,164 +260,43 @@
             </ul>
         </div>
     </nav>
-
-
     
-    <!-- Search Form -->
-	<div class="container search-form">
-	    <form th:action="@{/admin/search}" method="get">
-	        <div class="input-group column">
-	            <input type="text" class="form-control" placeholder="Search Title of post (LowerCase please!)" name="title" required>
-	            <input type="hidden" name="userName" th:value="${userName}" required hidden>
-	            <div class="input-group-append">
-	                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
-	            </div>
-	        </div>
-	    </form>
-	</div>
-
-    <!-- Content -->
-    <div class="container">
-        <!-- Heading -->
-        <div class="row mt-5">
-            <div class="col-md-12 text-center">
-                <p style="cursor: pointer; color: #007bff;" onclick="showPostForm()">Do you want to post the post?</p>
-            </div>
-        </div>
-
-        <!-- Overlay -->
-        <div class="overlay" id="overlay" onclick="hidePostForm()"></div>
-
-        <!-- Post Submission Form -->
-        <div id="postForm" class="post-form">
-            <button type="button" class="close" aria-label="Close" onclick="hidePostForm()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <form action="/admin/post" method="POST" enctype="multipart/form-data" th:object="${postDto}">
-                <div class="form-group">
-                    <label for="postTitle">Title</label>
-                    <input type="text" class="form-control" id="postTitle" name="title" placeholder="Enter the title" required th:field="${postDto.title}">
-                    <p th:if="${#fields.hasErrors('title')}" th:errorclass="text-danger" th:errors="${postDto.title}"></p>
-
-                </div>
-                <div class="form-group">
-                    <label for="postContent">Content</label>
-                    <textarea class="form-control" id="postContent" name="content" rows="4" placeholder="What's on your mind?" required th:field="${postDto.content}"></textarea>
-                    <p th:if="${#fields.hasErrors('content')}" th:errorclass="text-danger" th:errors="${postDto.content}"></p>
-                </div>
-                <div class="form-group">
-                    <label for="postImage">Upload Image</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="postImage" name="image" accept=".png" required th:field="${postDto.image}">
-                        <label class="custom-file-label" for="postImage">Choose file</label>
-                    	<p th:if="${#fields.hasErrors('image')}" th:errorclass="text-danger" th:errors="${postDto.image}"></p>
+    <!-- content -->
+   <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header text-center">
+                        <h3>Change Account</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:object="${accountDto}">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <div>
+							      	<input type="text" class="form-control" th:field="*{userName}" readonly>
+									<p th:if="${#fields.hasErrors('userName')}" th:errorclass="text-danger" th:errors="*{userName}"></p>
+							    </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div>
+							      	<input type="text" class="form-control" th:field="*{passWord}">
+									<p th:if="${#fields.hasErrors('passWord')}" th:errorclass="text-danger" th:errors="*{passWord}"></p>
+							    </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Save</button>
+                        </form>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Post</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- post Form -->
-    <div th:each="post : ${posts}">
-		<div class="post-container">
-			<div class="post-author-info">
-				<a th:href="@{/admin/profile(userNameProfile=${post.userNameProfile})}">
-					<img class="post-author-avatar" th:src="@{'/avatar/' + ${post.avatar}}" alt="Post Image">
-				</a>
-	            <div>
-	                <span class="post-timestamp" th:text="${post.time.toString().substring(0,10)}"></span>
-	            </div>
-	            <div class="btn-group dropend">
-				<button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-					<i class="fas fa-ellipsis-v"></i>
-				</button>
-				<ul class="dropdown-menu">
-					<!-- delete icon -->
-				 	<a class="dropdown-item" href="#" th:attr="onclick='confirmDeletePost(\'' + ${post.id} + '\')'"><i class="fas fa-trash"></i></a>
-				 	<!-- edit icon -->
-				 	<a class="dropdown-item" th:href="@{/admin/editpost(id=${post.id})}"><i class="fas fa-edit"></i></i></a>
-				</ul>
-				</div>
-	        </div>
-	        <div class="post-userName" th:text="${post.userNameProfile}"></div>
-	        <div class="post-header" th:text="${post.title}"></div>
-	        <div class="post-image-container">
-	            <a th:href="@{/admin/viewPost(id=${post.id})}">
-	                <img class="post-image" th:src="@{'/post/' + ${post.image}}" alt="Post Image">
-	            </a>
-	        </div>
-	        <div class="post-content" th:text="${post.content}">
-	            types of content.</div>
-	        <div class="post-actions">
-	            <button class="like-button">
-	                <img src="/icon/tim.png" alt="Like">
-	            </button>
-	        </div>
-	    </div>
-	</div>
-	
-	<!-- Pagination -->
-        <div class="row">
-            <div class="col-md-12">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/admin/search(title=${title}, userName=${userName}, page=${currentPage - 1}, size=${size})}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/admin/search(title=${title}, userName=${userName}, page=${i}, size=${size})}" th:text="${i + 1}">1</a>
-                        </li>
-                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/admin/search(title=${title}, userName=${userName}, page=${currentPage + 1}, size=${size})}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
-    
-
+    </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <script>
-		function confirmDeletePost(postId) {
-	        if (confirm("Are you sure you want to delete this post?")) {
-	            // Điều hướng đến phương thức xóa bài post
-	            window.location.href = "/admin/deletepost?id=" + postId;
-	        } else {
-	            console.log("Delete canceled");
-	        }
-	    }
-	    
-        // Function to show post form
-        function showPostForm() {
-            document.getElementById('postForm').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        // Function to hide post form
-        function hidePostForm() {
-            document.getElementById('postForm').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        // Close form when clicking outside of it
-        window.onclick = function(event) {
-            var postForm = document.getElementById('postForm');
-            var overlay = document.getElementById('overlay');
-            if (event.target == overlay) {
-                hidePostForm();
-            }
-        };
-        
-    </script>
 </body>
 </html>

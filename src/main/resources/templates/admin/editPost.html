@@ -113,6 +113,13 @@
             color: #777;
         }
 
+		.post-userName {
+            font-size: 0.875em; /* Adjust the font size as needed */
+            color: #333; /* Optional: Adjust the text color */
+            margin-bottom: 20px	;
+        }
+
+
         .post-image-container {
             text-align: center;
             margin-bottom: 20px;
@@ -292,8 +299,9 @@
 	                </div>
 	            </div>
 	            
+	            <div class="post-userName" th:text="${postDto.userNameProfile}"></div>
 	            <div class="form-group">
-	                <la	bel for="postTitle">Title</label>
+	                <label for="postTitle">Title</label>
 	                <input type="text" class="form-control" placeholder="Enter the title" required th:field="${postDto.title}">
 	                <p th:if="${#fields.hasErrors('title')}" th:errorclass="text-danger" th:errors="${postDto.title}"></p>
 	            </div>

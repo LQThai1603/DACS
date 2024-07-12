@@ -30,11 +30,11 @@
                                 <input type="password" class="form-control" th:field="${registerDto.passWord}">
                                 <p th:if="${#fields.hasErrors('passWord')}" th:errorclass="text-danger" th:errors="${registerDto.passWord}"></p>                  
                             </div>
-	                            <div class="form-group">
-	                                <label for="password">Confirm Password</label>
-	                                <input type="password" class="form-control" th:field="${registerDto.conFirmPassWord}">
-	                                <p th:if="${#fields.hasErrors('conFirmPassWord')}" th:errorclass="text-danger" th:errors="${registerDto.conFirmPassWord}"></p>
-	                            </div>
+	                        <div class="form-group">
+	                            <label for="password">Confirm Password</label>
+	                            <input type="password" class="form-control" th:field="${registerDto.conFirmPassWord}">
+	                            <p th:if="${#fields.hasErrors('conFirmPassWord')}" th:errorclass="text-danger" th:errors="${registerDto.conFirmPassWord}"></p>
+	                        </div>
                             <button type="submit" class="btn btn-primary btn-block">Register</button>
                         </form>
                     </div>

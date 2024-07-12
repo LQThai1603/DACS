@@ -112,6 +112,12 @@
         .post-timestamp {
             color: #777;
         }
+        
+        .post-userName {
+            font-size: 0.875em; /* Adjust the font size as needed */
+            color: #333; /* Optional: Adjust the text color */
+            margin-bottom: 20px	;
+        }
 
         .post-image-container {
             text-align: center;
@@ -286,6 +292,7 @@
 	                    <div class="post-timestamp" th:text="${postDto.time.toString().substring(0,10)}"></div>
 	                </div>
 	            </div>
+	            <div class="post-userName" th:text="${postDto.userNameProfile}"></div>
 	            
 	            <div class="form-group">
 	                <la	bel for="postTitle">Title</label>

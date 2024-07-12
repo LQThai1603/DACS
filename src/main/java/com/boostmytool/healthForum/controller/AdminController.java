@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boostmytool.healthForum.model.Account;
+import com.boostmytool.healthForum.model.AccountDto;
 import com.boostmytool.healthForum.model.Comment;
 import com.boostmytool.healthForum.model.Post;
 import com.boostmytool.healthForum.model.PostDto;
@@ -446,6 +447,35 @@ public class AdminController {
 		
 		Arepo.delete(a);
 		Prepo.delete(p);
+		return "redirect:/admin/accounts";
+	}
+	
+	@GetMapping("accounts/editaccount")
+	public String editAccount(Model model, @RequestParam String userName) {
+		
+		AccountDto accountDto = new AccountDto();
+		Account a = Arepo.findById(userName).get();
+		accountDto.setUserName(a.getUserName());
+		accountDto.setPassWord(a.getPassWord());
+		
+		model.addAttribute("accountDto", accountDto);
+		model.addAttribute("userName", accountDto.getUserName());
+		return "/admin/editAccount";
+	}
+	
+	@PostMapping("accounts/editaccount")
+	public String viewEditAccount(@Valid @ModelAttribute AccountDto accountDto) {
+		String editAccountUserName = "";
+		
+		for(int i=0; i<accountDto.getUserName().length(); i++) {
+			if(accountDto.getUserName().charAt(i) == ',') {
+				editAccountUserName = accountDto.getUserName().substring(0, i);
+			}
+		}
+		
+		Account a = Arepo.findById(editAccountUserName).get();
+		a.setPassWord(accountDto.getPassWord());	
+		Arepo.save(a);
 		return "redirect:/admin/accounts";
 	}
 }

@@ -1,10 +1,14 @@
 package com.boostmytool.healthForum.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.StackWalker.Option;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,17 +16,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boostmytool.healthForum.model.Account;
 import com.boostmytool.healthForum.model.AccountDto;
+import com.boostmytool.healthForum.model.Comment;
+import com.boostmytool.healthForum.model.Post;
+import com.boostmytool.healthForum.model.PostDto;
 import com.boostmytool.healthForum.model.Profile;
 import com.boostmytool.healthForum.model.ProfileDto;
 import com.boostmytool.healthForum.service.AccountRepository;
@@ -71,6 +83,18 @@ public class APIController {
         return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 	
+	@GetMapping("show/posts")
+	public ResponseEntity<List<Post>> getAllPost(){
+		List<Post> posts = Porepo.findAll();
+		return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
+	}
+	
+	@GetMapping("show/post/{idPost}")
+	public ResponseEntity<Post> getPostById(@PathVariable long idPost){
+		Optional<Post> post = Porepo.findById(idPost);
+		return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+	
 	@PostMapping("create/account")
 	public ResponseEntity<Account> createAccount(
 			@Valid @RequestBody AccountDto accountDto /*//chuyển đổi JSON được gửi bởi client thành đối tượng AccountDto*/){
@@ -83,6 +107,61 @@ public class APIController {
 		profile.setUserNameProfile(saveAccount.getUserName());
 		Prepo.save(profile);
 		return ResponseEntity.status(HttpStatus.CREATED).body(saveAccount);
+	}
+	
+	@PostMapping("create/post")
+	public ResponseEntity<Post> createPost(
+			@Valid @RequestBody PostDto postDto, 
+			@Valid @RequestBody Profile profile, // profile này là profile gắn với account hiện tại đang đang nhập vào (người post bài)
+			BindingResult result, RedirectAttributes redirectAttributes){
+		if(postDto.getImage() == null || postDto.getImage().isEmpty()) {
+			result.addError(new FieldError("postDto", "image", "Image is required"));
+		}
+		
+		if(result.hasErrors()) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		String upLoadDir = "public/post/";
+		
+		Post post = new Post();
+		post.setUserNameProfile(profile.getUserNameProfile());
+		post.setContent(postDto.getContent());
+		post.setTitle(postDto.getTitle().toLowerCase());
+		
+		if(postDto.getImage() != null) {
+			MultipartFile postImage = postDto.getImage();
+			try(InputStream inputStream = postImage.getInputStream()){
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+				Files.copy(inputStream, Paths.get(upLoadDir + post.getUserNameProfile()+ " " + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				post.setImage(post.getUserNameProfile() + " " + LocalDateTime.now().format(formatter).toString() + ".png");
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		post.setAvatar(profile.getAvatar());
+		
+		Post createPost = Porepo.save(post);
+		
+		return ResponseEntity.ok(createPost);
+	}
+	
+	@PostMapping("edit/account")
+	public ResponseEntity<Account> updateAccount(@Valid @RequestBody AccountDto accountDto){
+		String editAccountUserName = "";
+		
+		for(int i=0; i<accountDto.getUserName().length(); i++) {
+			if(accountDto.getUserName().charAt(i) == ',') {
+				editAccountUserName = accountDto.getUserName().substring(0, i);
+			}
+		}
+		
+		Account a = Arepo.findById(editAccountUserName).get();
+		a.setPassWord(accountDto.getPassWord());	
+		Account accountEdit = Arepo.save(a);
+		
+		return ResponseEntity.ok(accountEdit);
 	}
 	
 	@PostMapping("edit/profile/{userNameProfile}")
@@ -115,4 +194,78 @@ public class APIController {
 		Profile updatedProfile = Prepo.save(profile);
 		return ResponseEntity.ok(updatedProfile);
 	}
+	
+	@PostMapping("edit/post/{id}")
+	public ResponseEntity<Post> updatePost(@PathVariable long id, 
+			@Valid @RequestBody PostDto postDto,
+			@Valid @RequestBody String avatar,
+			RedirectAttributes redirectAttributes){
+		
+		String upLoadDir = "public/post/";
+		
+		Post p = new Post();
+	
+		p.setId(id);
+		p.setContent(postDto.getContent());
+		if(postDto.getImage() != null) {
+			MultipartFile postImage = postDto.getImage();
+			try(InputStream inputStream = postImage.getInputStream()){
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+				Files.copy(inputStream, Paths.get(upLoadDir + p.getUserNameProfile()+ " " + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+				p.setImage(p.getUserNameProfile() + " " + LocalDateTime.now().format(formatter).toString() + ".png");
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		p.setTitle(postDto.getTitle());
+		
+		
+		Porepo.updateByIdPost(id, p.getTitle(), p.getContent(), p.getImage());
+		Post updatePost = Porepo.findById(id).get();
+		
+		return ResponseEntity.ok(updatePost);
+	}
+	
+	@PostMapping("delete/account/{userName}")
+	public ResponseEntity<String> deleteAccount(@PathVariable String userName){
+		Account a = Arepo.findById(userName).get();
+		
+		Profile p = Prepo.findById(a.getUserNameProfile()).get();
+		
+		List<Comment> cm = p.getComment();
+		for(Comment comment : cm) {
+			Crepo.delete(comment);
+		}
+		
+		List<Post> po = p.getPosts();
+		for(Post post : po) {
+			Crepo.deleteByFieldIdPost(post.getId());
+			Porepo.deleteById(post.getId());
+		}
+		
+		Arepo.delete(a);
+		Prepo.delete(p);
+		return ResponseEntity.ok("Account and related data deleted successfully.");
+	}
+	
+	@PostMapping("delete/post/{id}")
+	public ResponseEntity<String> deletePost(@PathVariable long id){
+		Post p = Porepo.findById(id).get();
+		
+		String upLoadDir = "public/post/";
+		File file = new File(upLoadDir + p.getImage());
+		if(file.exists()) {
+			System.out.println("image of post is deleted!");
+			file.delete();
+		}
+		//delete comment with this post
+		Crepo.deleteByFieldIdPost(id);
+		
+		//delete post
+		Porepo.deleteById(id);
+		return ResponseEntity.ok("Post deleted successfully.");
+	}
+	
+	
 }
