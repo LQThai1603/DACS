@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .avatar-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .avatar-wrapper img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .avatar-wrapper input[type="file"] {
+            display: none;
+        }
+        .avatar-wrapper label {
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .navbar-custom {
+            background-color: #007bff;
+            transition: background-color 0.5s ease;
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #ffc107;
+        }
+        .navbar-custom.scrolled {
+            background-color: #0056b3;
+        }
+        
+        .navbar-brand {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.1);
+            color: #ffc107;
+        }
+
+        /* Style for form container */
+        .form-container {
+            margin-top: 80px; /* Adjust the margin top as needed */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+        <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <a class="navbar-brand" th:href="@{/admin(userName=${userName})}">
+            <i class="fas fa-heartbeat"></i> Health Forum
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/profiles">Profiles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/mypost(userName=${userName})}">My Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Accounts</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Messages</a>
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/home/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 form-container">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h3>User Profile</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" th:object="${profileDto}">
+							<div class="avatar-wrapper">
+	                            <img th:src="@{'/avatar/' + ${avatarFile}}" th:alt="${avatarFile}" id="avatarImage">
+	                            <input type="file" class="form-control" id="avatarInput" th:field="${profileDto.avatar}">
+	                            <label for="avatarInput" class="btn btn-primary">Upload Avatar</label>
+	                            <p th:if="${#fields.hasErrors('avatar')}" th:errorclass="text-danger" accept=".png" th:errors="${profileDto.avatar}"></p>
+	                        </div>
+                            <div class="form-group">
+                                <label for="userNameProfile">Username</label>
+                                <input type="text" class="form-control" id="userNameProfile" name="userNameProfile" th:field="${profileDto.userNameProfile}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" th:field="${profileDto.name}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" th:field="${profileDto.phoneNumber}">
+                            </div>
+                            <div class="form-group">
+                                <label for="birthDay">Birth Day</label>
+                                <input type="date" class="form-control" id="birthDay" name="birthDay" th:value="${profileDto.birthDay}">
+                            </div>
+                            <div class="form-group">
+                                <label for="sex">Sex</label>
+                                <select class="form-control" id="sex" name="sex" th:field="${profileDto.sex}">
+                                    <option value="male" th:selected="${profileDto.sex == male}">Male</option>
+                                    <option value="female" th:selected="${profileDto.sex == female}">Female</option>
+                                    <option value="other" th:selected="${profileDto.sex == other}">Other</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Save Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('avatarInput').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 50) {
+                $('.navbar-custom').addClass('scrolled');
+            } else {
+                $('.navbar-custom').removeClass('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

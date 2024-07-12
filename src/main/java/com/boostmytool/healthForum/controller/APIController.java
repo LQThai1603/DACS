@@ -37,44 +37,47 @@ import jakarta.validation.Valid;
 public class APIController {
 	@Autowired
 	private AccountRepository Arepo;
-	
+
 	@Autowired
 	private ProfileRepository Prepo;
-	
+
 	@Autowired
 	private PostRepository Porepo;
-	
+
 	@Autowired
 	private CommentRepository Crepo;
-	
+
 	@GetMapping("show/accounts")
-	public ResponseEntity<List<Account>> getAllAccount(){
+	public ResponseEntity<List<Account>> getAllAccount() {
 		List<Account> accounts = Arepo.findAll();
 		return new ResponseEntity<List<Account>>(accounts, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("show/account/{userName}")
-    public ResponseEntity<Account> getProductById(@PathVariable String userName) {
+	public ResponseEntity<Account> getProductById(@PathVariable String userName) {
 		Optional<Account> account = Arepo.findById(userName);
-        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-	
+		return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
 	@GetMapping("show/profiles")
-	public ResponseEntity<List<Profile>> getAllProfile(){
+	public ResponseEntity<List<Profile>> getAllProfile() {
 		List<Profile> profiles = Prepo.findAll();
 		return new ResponseEntity<List<Profile>>(profiles, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("show/profile/{userNameProfile}")
-    public ResponseEntity<Profile> getProfileById(@PathVariable String userNameProfile) {
-        Optional<Profile> profile = Prepo.findById(userNameProfile);
-        return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-	
+	public ResponseEntity<Profile> getProfileById(@PathVariable String userNameProfile) {
+		Optional<Profile> profile = Prepo.findById(userNameProfile);
+		return profile.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
 	@PostMapping("create/account")
 	public ResponseEntity<Account> createAccount(
-			@Valid @RequestBody AccountDto accountDto /*//chuyển đổi JSON được gửi bởi client thành đối tượng AccountDto*/){
-		
+			@Valid @RequestBody AccountDto accountDto /*
+														 * //chuyển đổi JSON được gửi bởi client thành đối tượng
+														 * AccountDto
+														 */) {
+
 		Account account = new Account();
 		account.setUserName(accountDto.getUserName().trim());
 		account.setPassWord(accountDto.getPassWord().trim());
@@ -84,34 +87,34 @@ public class APIController {
 		Prepo.save(profile);
 		return ResponseEntity.status(HttpStatus.CREATED).body(saveAccount);
 	}
-	
+
 	@PostMapping("edit/profile/{userNameProfile}")
 	public ResponseEntity<Profile> updateProfile(@PathVariable String userNameProfile,
-			@Valid @RequestBody ProfileDto profileDto){
+			@Valid @RequestBody ProfileDto profileDto) {
 		Optional<Profile> profileOpt = Prepo.findById(userNameProfile);
-		if(!profileOpt.isPresent()) {
+		if (!profileOpt.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
-		
+
 		Profile profile = profileOpt.get();
 		String upLoadDir = "public/avatar/";
-		
-		//save avatar
+
+		// save avatar
 		MultipartFile newAvatar = profileDto.getAvatar();
-		try(InputStream inputStream = newAvatar.getInputStream()){
-			Files.copy(inputStream, Paths.get( upLoadDir + profile.getUserNameProfile() + ".png"), StandardCopyOption.REPLACE_EXISTING);
+		try (InputStream inputStream = newAvatar.getInputStream()) {
+			Files.copy(inputStream, Paths.get(upLoadDir + profile.getUserNameProfile() + ".png"),
+					StandardCopyOption.REPLACE_EXISTING);
 			profile.setAvatar(profile.getUserNameProfile() + ".png");
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		profile.setBirthDay(profileDto.getBirthDay());
 		profile.setName(profileDto.getName().trim());
 		profile.setPhoneNumber(profileDto.getPhoneNumber().trim());
 		profile.setSex(profileDto.getSex().trim());
-		
+
 		Profile updatedProfile = Prepo.save(profile);
 		return ResponseEntity.ok(updatedProfile);
 	}

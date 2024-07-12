@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Forum</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* General styling */
+        body {
+            padding-top: 4.5rem; /* Fix navbar overlapping */
+        }
+
+        .navbar-custom {
+            background-color: #007bff;
+            transition: background-color 0.5s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #ffc107;
+        }
+        .navbar-custom.scrolled {
+            background-color: #0056b3;
+        }
+        
+        .navbar-brand {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.1);
+            color: #ffc107;
+        }
+
+        /* Dropdown styling */
+        .dropdown-menu {
+            background-color: #007bff;
+            margin-left: -2rem; /* Lùi sang trái 1rem */
+            min-width: 40px;
+        }
+        .dropdown-menu a.dropdown-item {
+            color: #fff;
+            
+        }
+        .dropdown-menu a.dropdown-item:hover {
+            background-color: #0056b3;
+        }
+
+        /* Navbar toggler icon */
+        .navbar-toggler-icon {
+            background-color: #fff;
+        }
+        .navbar-toggler {
+            border-color: #fff;
+        }
+        .navbar-toggler:hover {
+            background-color: #0056b3;
+        }
+
+        /* Scroll animation */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -10%, 0);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* Navbar animation */
+        .navbar-custom {
+            animation: fadeInDown 0.5s;
+        }
+
+        /* Custom form styling */
+        .post-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1050; /* Ensure modal is above everything else */
+            width: 80%;
+            max-width: 600px;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.3rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            display: none; /* Hide initially */
+            animation: slideDown 0.5s forwards; /* Animation */
+        }
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -200%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        .post-form .form-group {
+            margin-bottom: 1rem;
+        }
+        .post-form .form-control {
+            border-radius: 0.25rem;
+        }
+        .post-form .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease;
+        }
+        .post-form .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .post-form .custom-file-label::after {
+            content: "Browse";
+        }
+        .post-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 40px;
+            margin-top: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .post-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        
+        
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .post-author-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-timestamp {
+            color: #777;
+        }
+
+        .post-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-content {
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .like-button {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .like-button img {
+            width: 48px;
+            height: 48px;
+            transition: transform 0.2s;
+        }
+
+        .like-button img:hover {
+            transform: scale(1.1);
+        }
+
+        .like-button img:active {
+            transform: scale(0.9);
+        }
+
+        /* Overlay styling */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt 50% */
+            display: none; /* Ẩn ban đầu */
+            z-index: 1040; /* Z-index thấp hơn form để nằm phía dưới form */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <a class="navbar-brand" th:href="@{/admin(userName=${userName})}">
+            <i class="fas fa-heartbeat"></i> Health Forum
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/profiles">Profiles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/mypost(userName=${userName})}">My Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Accounts</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Messages</a>
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/home/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Search Form -->
+    <div class="container search-form">
+        <form th:action="@{/admin/search}" method="get">
+            <div class="input-group column">
+                <input type="text" class="form-control" placeholder="Search title of post (LowerCase please!)" name="title" required>
+                <input type="hidden" name="userName" th:value="${userName}" required hidden>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Content -->
+    <div class="container">
+        <!-- Heading -->
+        <div class="row mt-5">
+            <div class="col-md-12 text-center">
+                <p style="cursor: pointer; color: #007bff;" onclick="showPostForm()">Do you want to post the post?</p>
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="hidePostForm()"></div>
+
+        <!-- Post Submission Form -->
+        <div id="postForm" class="post-form">
+            <button type="button" class="close" aria-label="Close" onclick="hidePostForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <form action="/admin/post" method="POST" enctype="multipart/form-data" th:object="${postDto}">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" class="form-control" id="postTitle" name="title" placeholder="Enter the title" required th:field="${postDto.title}">
+                    <p th:if="${#fields.hasErrors('title')}" th:errorclass="text-danger" th:errors="${postDto.title}"></p>
+
+                </div>
+                <div class="form-group">
+                    <label for="postContent">Content</label>
+                    <textarea class="form-control" id="postContent" name="content" rows="4" placeholder="What's on your mind?" required th:field="${postDto.content}"></textarea>
+                    <p th:if="${#fields.hasErrors('content')}" th:errorclass="text-danger" th:errors="${postDto.content}"></p>
+                </div>
+                <div class="form-group">
+                    <label for="postImage">Upload Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="postImage" name="image" required accept=".png" th:field="${postDto.image}">
+                        <label class="custom-file-label" for="postImage">Choose file</label>
+                    	<p th:if="${#fields.hasErrors('image')}" th:errorclass="text-danger" th:errors="${postDto.image}"></p>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Post</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- post Form -->
+    <div th:each="post : ${posts}">
+		<div class="post-container">
+			<div class="post-author-info">
+				<a th:href="@{/admin/profile(userNameProfile=${post.userNameProfile})}">
+					<img class="post-author-avatar" th:src="@{'/avatar/' + ${post.avatar}}" alt="Post Image">
+				</a>
+	            <div>
+	                <span class="post-timestamp" th:text="${post.time.toString().substring(0,10)}"></span>
+	            </div>
+	            <div class="btn-group dropend">
+				<button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+					<i class="fas fa-ellipsis-v"></i>
+				</button>
+				<ul class="dropdown-menu">
+					<!-- delete icon -->
+				 	<a class="dropdown-item" href="#" th:attr="onclick='confirmDeletePost(\'' + ${post.id} + '\')'"><i class="fas fa-trash"></i></a>
+				 	<!-- edit icon -->
+				 	<a class="dropdown-item" th:href="@{/admin/editpost(id=${post.id})}"><i class="fas fa-edit"></i></i></a>
+				</ul>
+				</div>
+	        </div>
+	        <div class="post-header" th:text="${post.title}"></div>
+	        <div class="post-image-container">
+	            <a th:href="@{/admin/viewPost(id=${post.id})}">
+	                <img class="post-image" th:src="@{'/post/' + ${post.image}}" alt="Post Image">
+	            </a>
+	        </div>
+	        <div class="post-content" th:text="${post.content}">
+	            types of content.</div>
+	        <div class="post-actions">
+	            <button class="like-button">
+	                <img src="/icon/tim.png" alt="Like">
+	            </button>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- Pagination -->
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin(userName=${userName}, page=${currentPage - 1}, size=${size})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:href="@{/admin(userName=${userName}, page=${i}, size=${size})}" th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin(userName=${userName}, page=${currentPage + 1}, size=${size})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+		function confirmDeletePost(postId) {
+	        if (confirm("Are you sure you want to delete this post?")) {
+	            // Điều hướng đến phương thức xóa bài post
+	            window.location.href = "/admin/deletepost?id=" + postId;
+	        } else {
+	            console.log("Delete canceled");
+	        }
+	    }
+	    
+        // Function to show post form
+        function showPostForm() {
+            document.getElementById('postForm').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Function to hide post form
+        function hidePostForm() {
+            document.getElementById('postForm').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Close form when clicking outside of it
+        window.onclick = function(event) {
+            var postForm = document.getElementById('postForm');
+            var overlay = document.getElementById('overlay');
+            if (event.target == overlay) {
+                hidePostForm();
+            }
+        };
+    </script>
+</body>
+</html>
