@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Screens/login_screen.dart';
+import 'Screens/Auth/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Auth App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

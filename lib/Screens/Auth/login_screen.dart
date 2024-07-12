@@ -1,71 +1,69 @@
-import 'package:dacs/Screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../Home/RootApp.dart';
+import '../register_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
   String _message = '';
 
-  Future<void> _registerUser() async {
-    final String apiUrl = 'http://192.168.144.1:8080/api/create/account';
+  Future<void> loginUser() async {
+    final String apiUrl = 'http://192.168.144.1:8080/api/show/account/${_usernameController.text}';
 
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'userName': _usernameController.text.trim(),
-        'passWord': _passwordController.text.trim(),
-      }),
-    );
+      if (response.statusCode == 200) {
+        final user = jsonDecode(response.body);
+        print('User: $user');
 
-    if (response.statusCode == 201) {
+        // Kiểm tra xem đăng nhập thành công hay không dựa vào phản hồi từ API
+        if (user['passWord'] == _passwordController.text) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RootApp()),
+          );
+        } else {
+          setState(() {
+            _message = 'Invalid username or password';
+          });
+        }
+      } else {
+        setState(() {
+          _message = 'Failed to login';
+        });
+      }
+    } catch (e) {
+      print('Error logging in: $e');
       setState(() {
-        _message = 'Account created successfully';
-      });
-    } else {
-      setState(() {
-        _message = 'Failed to create account';
+        _message = 'Failed to connect to server';
       });
     }
   }
 
-  String? _validateUsername(String? value) {
-    final regex = RegExp(r'^[a-zA-Z0-9]+$');
-    if (value == null || value.isEmpty) {
-      return 'Please enter a username';
-    } else if (!regex.hasMatch(value)) {
-      return 'Username cannot contain special characters';
-    }
-    return null;
-  }
+  void _trySubmit() {
+    final isValid = _formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty || value.length < 7) {
-      return 'Password must be at least 7 characters long';
+    if (isValid) {
+      _formKey.currentState!.save();
+      loginUser();
     }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value != _passwordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
   }
 
   @override
@@ -78,13 +76,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Stack(
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.8,
-                  child: Image.asset(
-                    "assets/suckhoe.jpg",
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * 0.8,
+                    child: Image.asset(
+                      "assets/suckhoe.jpg",
+                      fit: BoxFit.cover,
+                    )),
                 Container(
                   margin: const EdgeInsets.only(top: 260),
                   decoration: const BoxDecoration(
@@ -103,85 +100,69 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Text(
                             "Welcome",
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w500,
-                            ),
+                                color: Theme.of(context).primaryColor, fontSize: 32, fontWeight: FontWeight.w500),
                           ),
                           const Text(
-                            'Please sign up with your information',
+                            'Please login with your information',
                             style: TextStyle(color: Colors.grey),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 10,),
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
                             margin: const EdgeInsets.symmetric(vertical: 10.0),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFedf0f8),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                                color: const Color(0xFFedf0f8),
+                                borderRadius: BorderRadius.circular(30)),
                             child: TextFormField(
                               key: const ValueKey('username'),
-                              validator: _validateUsername,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your username';
+                                }
+                                return null;
+                              },
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Username",
                                 hintStyle: TextStyle(
-                                  color: Color(0xFFb2b7bf),
-                                  fontSize: 16.0,
-                                ),
+                                    color: Color(0xFFb2b7bf), fontSize: 16.0),
                                 labelText: 'Username',
                               ),
-                              controller: _usernameController,
+                              onSaved: (value) {
+                                _usernameController.text = value!;
+                              },
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
                             margin: const EdgeInsets.symmetric(vertical: 10.0),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFedf0f8),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                                color: const Color(0xFFedf0f8),
+                                borderRadius: BorderRadius.circular(30)),
                             child: TextFormField(
                               key: const ValueKey('password'),
-                              validator: _validatePassword,
+                              validator: (value) {
+                                if (value == null || value.isEmpty || value.length < 10) {
+                                  return 'Password must be at least 10 characters long';
+                                }
+                                return null;
+                              },
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Password",
                                 hintStyle: TextStyle(
-                                  color: Color(0xFFb2b7bf),
-                                  fontSize: 16.0,
-                                ),
+                                    color: Color(0xFFb2b7bf), fontSize: 16.0),
                                 labelText: 'Password',
                               ),
                               obscureText: true,
-                              controller: _passwordController,
+                              onSaved: (value) {
+                                _passwordController.text = value!;
+                              },
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
-                            margin: const EdgeInsets.symmetric(vertical: 10.0),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFedf0f8),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: TextFormField(
-                              key: const ValueKey('confirmPassword'),
-                              validator: _validateConfirmPassword,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Confirm Password",
-                                hintStyle: TextStyle(
-                                  color: Color(0xFFb2b7bf),
-                                  fontSize: 16.0,
-                                ),
-                                labelText: 'Confirm Password',
-                              ),
-                              obscureText: true,
-                              controller: _confirmPasswordController,
-                            ),
+                          const SizedBox(
+                            height: 12,
                           ),
-                          const SizedBox(height: 12),
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: 50.0,
@@ -190,16 +171,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: ElevatedButton(
-                              onPressed: _registerUser,
+                              onPressed: _trySubmit,
                               style: ElevatedButton.styleFrom(
                                 primary: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 minimumSize: Size(double.infinity, 50.0),
                               ),
                               child: const Text(
-                                'Sign Up',
+                                'Login',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 22.0,
@@ -211,18 +190,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: 20),
                           Text(
                             _message,
-                            style: TextStyle(color: Colors.green),
+                            style: TextStyle(color: Colors.red),
                           ),
                           const SizedBox(height: 20),
                           TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                                MaterialPageRoute(builder: (context) => RegisterScreen()),
                               );
                             },
                             child: const Text(
-                              'You already have an account! Sign in here',
+                              'Don\'t have an account? Sign up here',
                               style: TextStyle(color: Colors.blue),
                             ),
                           ),

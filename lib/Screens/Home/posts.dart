@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  final String userName;
-
-  HomeScreen({required this.userName});
+class Posts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Posts'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Welcome, $userName!',
+              'Welcome, !',
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 20),
