@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../Home/RootApp.dart';
-import '../register_screen.dart';
+import '../Auth/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,7 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String _message = '';
 
   Future<void> loginUser() async {
-    final String apiUrl = 'http://192.168.144.1:8080/api/show/account/${_usernameController.text}';
+    final String apiUrl =
+        'http://192.168.144.1:8080/api/show/account/${_usernameController.text}';
 
     try {
       final response = await http.get(
@@ -92,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 30, left: 20.0, right: 20.0),
+                    padding:
+                        const EdgeInsets.only(top: 30, left: 20.0, right: 20.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -100,15 +102,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Welcome",
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor, fontSize: 32, fontWeight: FontWeight.w500),
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w500),
                           ),
                           const Text(
                             'Please login with your information',
                             style: TextStyle(color: Colors.grey),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2.0, horizontal: 30.0),
                             margin: const EdgeInsets.symmetric(vertical: 10.0),
                             decoration: BoxDecoration(
                                 color: const Color(0xFFedf0f8),
@@ -134,7 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2.0, horizontal: 30.0),
                             margin: const EdgeInsets.symmetric(vertical: 10.0),
                             decoration: BoxDecoration(
                                 color: const Color(0xFFedf0f8),
@@ -142,7 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextFormField(
                               key: const ValueKey('password'),
                               validator: (value) {
-                                if (value == null || value.isEmpty || value.length < 10) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.length < 10) {
                                   return 'Password must be at least 10 characters long';
                                 }
                                 return null;
@@ -174,7 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: _trySubmit,
                               style: ElevatedButton.styleFrom(
                                 primary: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
                                 minimumSize: Size(double.infinity, 50.0),
                               ),
                               child: const Text(
@@ -197,7 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => RegisterScreen()),
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterScreen()),
                               );
                             },
                             child: const Text(
