@@ -1,6 +1,8 @@
 package com.boostmytool.healthForum.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.StackWalker.Option;
@@ -59,6 +61,26 @@ public class APIController {
 	@Autowired
 	private CommentRepository Crepo;
 	
+	public byte[] convertImageToByteArray(String imagePath) {
+        File file = new File(imagePath);
+        byte[] imageBytes = null;
+        
+        try (FileInputStream fis = new FileInputStream(file);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+            imageBytes = baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return imageBytes;
+    }
+	
 	@GetMapping("show/accounts")
 	public ResponseEntity<List<Account>> getAllAccount(){
 		List<Account> accounts = Arepo.findAll();
@@ -93,6 +115,19 @@ public class APIController {
 	public ResponseEntity<Post> getPostById(@PathVariable long idPost){
 		Optional<Post> post = Porepo.findById(idPost);
 		return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+	
+	@GetMapping("show/postImage{FileImage}")
+	public ResponseEntity<byte[]> getPostImage(@PathVariable String FileImage){
+		byte[] byteImage = convertImageToByteArray("public/post/" + FileImage);
+		
+		return ResponseEntity.ok(byteImage);
+	}
+	
+	@GetMapping("show/avatar{FileImage}")
+	public ResponseEntity<byte[]> getAvatar(@PathVariable String FileImage){
+		byte[] byteImage = convertImageToByteArray("public/avatar/" + FileImage);
+		return ResponseEntity.ok(byteImage);
 	}
 	
 	@PostMapping("create/account")
