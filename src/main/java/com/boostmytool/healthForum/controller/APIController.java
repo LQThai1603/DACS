@@ -117,6 +117,12 @@ public class APIController {
 		return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 	
+	@GetMapping("show/comments/{idPost}") //lấy tất cả comment đã tồn tại trong bài post có id là idPost
+	public ResponseEntity<List<Comment>> getComments(@PathVariable long idPost){
+		List<Comment> c = Crepo.findByFieldIdPost(idPost);
+		return ResponseEntity.ok(c);
+	}
+	
 	@GetMapping("show/postImage{FileImage}")
 	public ResponseEntity<byte[]> getPostImage(@PathVariable String FileImage){
 		byte[] byteImage = convertImageToByteArray("public/post/" + FileImage);
@@ -180,6 +186,15 @@ public class APIController {
 		Post createPost = Porepo.save(post);
 		
 		return ResponseEntity.ok(createPost);
+	}
+	
+	@PostMapping("create/comment/{idPost}") // hàm tạo 1 comment từ tài khoản hiện tại () vào bài viết có id là idPost
+	public ResponseEntity<Comment> createComment(@Valid @RequestBody Profile profile, @PathVariable long idPost){
+		Comment cm = new Comment();
+		cm.setAvatar(profile.getAvatar());
+		cm.setIdPost(idPost);
+		cm.setUserNameProfile(profile.getUserNameProfile());
+		return ResponseEntity.ok(cm);
 	}
 	
 	@PostMapping("edit/account")
