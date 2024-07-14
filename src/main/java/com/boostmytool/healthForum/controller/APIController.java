@@ -89,8 +89,14 @@ public class APIController {
 	}
 
 	@PostMapping("edit/profile/{userNameProfile}")
-	public ResponseEntity<Profile> updateProfile(@PathVariable String userNameProfile,
-			@Valid @RequestBody ProfileDto profileDto) {
+	public ResponseEntity<Profile> updateProfile(
+			@PathVariable String userNameProfile,
+			@RequestParam("name") String name,
+			@RequestParam("phoneNumber") String phoneNumber,
+			@RequestParam("birthDay") String birthDay,
+			@RequestParam("sex") String sex,
+			@RequestPart(value = "avatar", required = false) MultipartFile avatar) {
+
 		Optional<Profile> profileOpt = Prepo.findById(userNameProfile);
 		if (!profileOpt.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -100,20 +106,20 @@ public class APIController {
 		String upLoadDir = "public/avatar/";
 
 		// save avatar
-		MultipartFile newAvatar = profileDto.getAvatar();
-		try (InputStream inputStream = newAvatar.getInputStream()) {
-			Files.copy(inputStream, Paths.get(upLoadDir + profile.getUserNameProfile() + ".png"),
-					StandardCopyOption.REPLACE_EXISTING);
-			profile.setAvatar(profile.getUserNameProfile() + ".png");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (avatar != null) {
+			try (InputStream inputStream = avatar.getInputStream()) {
+				Files.copy(inputStream, Paths.get(upLoadDir + profile.getUserNameProfile() + ".png"),
+						StandardCopyOption.REPLACE_EXISTING);
+				profile.setAvatar(profile.getUserNameProfile() + ".png");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
-		profile.setBirthDay(profileDto.getBirthDay());
-		profile.setName(profileDto.getName().trim());
-		profile.setPhoneNumber(profileDto.getPhoneNumber().trim());
-		profile.setSex(profileDto.getSex().trim());
+		profile.setBirthDay(LocalDate.parse(birthDay)); // Chuyển đổi từ String sang LocalDate
+		profile.setName(name.trim());
+		profile.setPhoneNumber(phoneNumber.trim());
+		profile.setSex(sex.trim());
 
 		Profile updatedProfile = Prepo.save(profile);
 		return ResponseEntity.ok(updatedProfile);

@@ -40,6 +40,7 @@ dependencies:
   ionicons: ^0.2.2
   cupertino_icons: ^1.0.2
   http: ^1.2.0
+  image_picker: ^0.8.4+2
 #  get: ^4.6.6
 #  shared_preferences: ^2.2.3
 

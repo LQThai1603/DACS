@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (user['passWord'] == _passwordController.text) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RootApp()),
+            MaterialPageRoute(builder: (context) => RootApp(userName: _usernameController.text)),
           );
         } else {
           setState(() {
