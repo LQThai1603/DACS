@@ -63,7 +63,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.3.23</version> <!-- hoặc phiên bản phù hợp với dự án của bạn -->
+        </dependency>
 	</dependencies>
+	
 
 	<build>
 		<plugins>
