@@ -1,5 +1,7 @@
 package com.boostmytool.healthForum.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +16,9 @@ public interface PostRepository extends JpaRepository<Post, Long>{
 	 
 	 @Query("SELECT p FROM Post p WHERE p.userNameProfile = :userName")
 	 Page<Post> findByUserNameProfile(String userName, Pageable pageable);
+	 
+	 @Query("SELECT p FROM Post p WHERE p.userNameProfile = :userName")
+	 List<Post> findByUserNameProfile(String userName);
 	 
 	 @Query("SELECT p FROM Post p WHERE p.title LIKE %:title%")
 	 Page<Post> findByTitle(String title, Pageable pageable);

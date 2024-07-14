@@ -3,6 +3,7 @@ package com.boostmytool.healthForum.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.StackWalker.Option;
@@ -39,6 +40,7 @@ import com.boostmytool.healthForum.model.Comment;
 import com.boostmytool.healthForum.model.Post;
 import com.boostmytool.healthForum.model.PostDto;
 import com.boostmytool.healthForum.model.Profile;
+import com.boostmytool.healthForum.model.ProfileDtOAndroid;
 import com.boostmytool.healthForum.model.ProfileDto;
 import com.boostmytool.healthForum.service.AccountRepository;
 import com.boostmytool.healthForum.service.CommentRepository;
@@ -124,14 +126,13 @@ public class APIController {
 		return ResponseEntity.ok(c);
 	}
 	
-	@GetMapping("show/postImage{FileImage}")
+	@GetMapping("show/postImage/{FileImage}")
 	public ResponseEntity<byte[]> getPostImage(@PathVariable String FileImage){
 		byte[] byteImage = convertImageToByteArray("public/post/" + FileImage);
-		
 		return ResponseEntity.ok(byteImage);
 	}
 	
-	@GetMapping("show/avatar{FileImage}")
+	@GetMapping("show/avatar/	{FileImage}")
 	public ResponseEntity<byte[]> getAvatar(@PathVariable String FileImage){
 		byte[] byteImage = convertImageToByteArray("public/avatar/" + FileImage);
 		return ResponseEntity.ok(byteImage);
@@ -217,7 +218,7 @@ public class APIController {
 	
 	@PostMapping("edit/profile/{userNameProfile}")
 	public ResponseEntity<Profile> updateProfile(@PathVariable String userNameProfile,
-			@Valid @RequestBody ProfileDto profileDto){
+			@Valid @RequestBody ProfileDtOAndroid profileDto){
 		Optional<Profile> profileOpt = Prepo.findById(userNameProfile);
 		if(!profileOpt.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -225,16 +226,22 @@ public class APIController {
 		
 		Profile profile = profileOpt.get();
 		String upLoadDir = "public/avatar/";
-		
+		String oleAvatar = profile.getAvatar();
 		//save avatar
-		MultipartFile newAvatar = profileDto.getAvatar();
-		try(InputStream inputStream = newAvatar.getInputStream()){
-			Files.copy(inputStream, Paths.get( upLoadDir + profile.getUserNameProfile() + ".png"), StandardCopyOption.REPLACE_EXISTING);
-			profile.setAvatar(profile.getUserNameProfile() + ".png");
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		byte[] newAvatar = profileDto.getAvatar();
+		File file = new File(upLoadDir, profile.getUserNameProfile() + ".png");
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(newAvatar);
+            System.out.println("Tệp tin đã được tạo thành công tại: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		if(oleAvatar.equals("default.png") && !profile.getAvatar().equals("default.png")) {
+			List<Post> posts = Porepo.findByUserNameProfile(profile.getUserNameProfile());
+			for(Post po : posts) {
+				po.setAvatar(profile.getAvatar());
+			}
 		}
 		
 		profile.setBirthDay(profileDto.getBirthDay());

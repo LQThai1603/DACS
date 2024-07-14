@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +139,7 @@ public class HomeController {
 		}
 		
 		String upLoadDir = "public/avatar/";
-		
+		String oleAvatar = profile.getAvatar();
 		//save avatar
 		MultipartFile newAvatar = profileDto.getAvatar();
 		if(!newAvatar.isEmpty()) {
@@ -152,10 +153,18 @@ public class HomeController {
 			}
 		}
 		
+		if(oleAvatar.equals("default.png") && !profile.getAvatar().equals("default.png")) {
+			List<Post> posts = Porepo.findByUserNameProfile(profile.getUserNameProfile());
+			for(Post po : posts) {
+				po.setAvatar(profile.getAvatar());
+			}
+		}
+		
 		profile.setBirthDay(profileDto.getBirthDay());
 		profile.setName(profileDto.getName());
 		profile.setPhoneNumber(profileDto.getPhoneNumber());
 		profile.setSex(profileDto.getSex());
+		
 		
 		
 		model.addAttribute("profile", profile);

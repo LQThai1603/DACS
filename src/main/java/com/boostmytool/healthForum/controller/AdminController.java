@@ -317,7 +317,7 @@ public class AdminController {
 		p.setUserNameProfile(profileDto.getUserNameProfile());
 		
 		String upLoadDir = "public/avatar/";
-		
+		String oleAvatar = profile.getAvatar();
 		//save avatar
 		MultipartFile newAvatar = profileDto.getAvatar();
 		if(!newAvatar.isEmpty()) {
@@ -328,6 +328,13 @@ public class AdminController {
 			catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		
+		if(oleAvatar.equals("default.png") && !profile.getAvatar().equals("default.png")) {
+			List<Post> posts = Porepo.findByUserNameProfile(profile.getUserNameProfile());
+			for(Post po : posts) {
+				po.setAvatar(profile.getAvatar());
 			}
 		}
 		
