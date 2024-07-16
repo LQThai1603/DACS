@@ -17,7 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _message = '';
 
   Future<void> _registerUser() async {
-    final String apiUrl = 'http://192.168.144.1:8080/api/create/account';
+    final String apiUrl = 'http://192.168.100.107:8080/api/create/account';
 
     if (!_formKey.currentState!.validate()) {
       return;
@@ -194,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: ElevatedButton(
                               onPressed: _registerUser,
                               style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
+                                backgroundColor: Theme.of(context).primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),

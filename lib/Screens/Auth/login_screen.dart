@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loginUser() async {
     final String apiUrl =
-        'http://192.168.144.1:8080/api/show/account/${_usernameController.text}';
+        'http://192.168.100.107:8080/api/show/account/${_usernameController.text}';
 
     try {
       final response = await http.get(
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (user['passWord'] == _passwordController.text) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RootApp()),
+            MaterialPageRoute(builder: (context) => RootApp(userName: _usernameController.text)),
           );
         } else {
           setState(() {
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(top: 30, left: 20.0, right: 20.0),
+                    const EdgeInsets.only(top: 30, left: 20.0, right: 20.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton(
                               onPressed: _trySubmit,
                               style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
+                                backgroundColor: Theme.of(context).primaryColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30)),
                                 minimumSize: Size(double.infinity, 50.0),
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                             child: const Text(
-                              'Don\'t have an account? Sign up here',
+                              'Bạn chưa có tài khoản ? Hãy đăng ký tại đây',
                               style: TextStyle(color: Colors.blue),
                             ),
                           ),

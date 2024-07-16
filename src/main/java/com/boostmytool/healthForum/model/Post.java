@@ -35,7 +35,7 @@ public class Post {
 	private String avatar;
 	
 	@ManyToOne
-	 @JsonBackReference
+	@JsonBackReference
 	@JoinColumn(name = "usernameprofile", referencedColumnName = "usernameprofile", insertable = false, updatable = false)
 	private Profile profile;
 	
@@ -43,9 +43,9 @@ public class Post {
 	@Column(name = "usernameprofile")
 	private String userNameProfile;
 
-	@OneToMany(mappedBy = "post")
-	@JsonManagedReference
-	private List<Comment> comment;
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference("post-comments")
+    private List<Comment> comments;
 	
 	public Post(@NotEmpty(message = "ID of Post is required") long id, String title, String content, String image,
 			String userNameProfile, LocalDateTime time, String avatar) {

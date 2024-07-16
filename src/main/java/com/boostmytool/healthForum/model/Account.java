@@ -54,6 +54,14 @@ public class Account {
 	public void setPassWord(String passWord) {
 		this.passWord = passWord;
 	}
+
+	public String getUserNameProfile() {
+		return userNameProfile;
+	}
+
+	public void setUserNameProfile(String userNameProfile) {
+		this.userNameProfile = userNameProfile;
+	}
 	
 	
 }

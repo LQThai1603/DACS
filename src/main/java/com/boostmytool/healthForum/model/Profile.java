@@ -19,36 +19,36 @@ import jakarta.validation.constraints.NotEmpty;
 @Table(name = "profile")
 public class Profile {
 	@Id
-	@NotEmpty(message = "PassWord is required")
-	@Column(name = "usernameprofile")
-	private String userNameProfile;
-	
-	@Column(name = "name")
-	private String name;
-	
-	@Column(name = "phonenumber")
-	private String phoneNumber;
-	
-	@Column(name = "birthday")
-	private LocalDate birthDay;
-	
-	@Column(name = "sex")
-	private String sex;
-	
-	@Column(name = "avatar")
-	private String avatar;
-	
-	@OneToOne(mappedBy = "profile")
-	@JsonManagedReference
+    @NotEmpty(message = "PassWord is required")
+    @Column(name = "usernameprofile")
+    private String userNameProfile;
+    
+    @Column(name = "name")
+    private String name;
+    
+    @Column(name = "phonenumber")
+    private String phoneNumber;
+    
+    @Column(name = "birthday")
+    private LocalDate birthDay;
+    
+    @Column(name = "sex")
+    private String sex;
+    
+    @Column(name = "avatar")
+    private String avatar;
+    
+    @OneToOne(mappedBy = "profile")
+    @JsonManagedReference
     private Account account;
-	
-	@OneToMany(mappedBy = "profile")
-	@JsonManagedReference
+    
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    @JsonManagedReference("profile-posts")
     private List<Post> posts;
-	
-	@OneToMany(mappedBy = "profile")
-	@JsonManagedReference
-	private List<Comment> comment;
+    
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    @JsonManagedReference("profile-comments")
+    private List<Comment> comments;
 	
 	public Profile(@NotEmpty(message = "PassWord is required") String userNameProfile, 
 			String name, 
@@ -136,4 +136,14 @@ public class Profile {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+
+	public List<Comment> getComment() {
+		return comments;
+	}
+
+	public void setComment(List<Comment> comments) {
+		this.comments = comments;
+	}
+    
+    
 }

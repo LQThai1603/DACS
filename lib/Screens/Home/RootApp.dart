@@ -8,7 +8,8 @@ import 'profile.dart';
 import 'home_screen.dart';
 
 class RootApp extends StatefulWidget {
-  const RootApp({Key? key}) : super(key: key);
+  final String userName;
+  const RootApp({Key? key, required this.userName}) : super(key: key);
 
   @override
   _RootAppState createState() => _RootAppState();
@@ -16,30 +17,39 @@ class RootApp extends StatefulWidget {
 
 class _RootAppState extends State<RootApp> with TickerProviderStateMixin {
   int _activeTab = 0;
-  final List barItems = [
-    {
-      "icon": "assets/home-border.svg",
-      "active_icon": "assets/home.svg",
-      "page": HomeScreen(),
-    },
-    {
-      "icon": "assets/post-1.svg",
-      "active_icon": "assets/post-1.svg",
-      "page": Forum(),
-    },
-    {
-      "icon": "assets/heart.svg",
-      "active_icon": "assets/heart.svg",
-      "page": Posts(),
-    },
-    {
-      "icon": "assets/profile.svg",
-      "active_icon": "assets/profile.svg",
-      "page": Profile()
-    },
-  ];
+  late final List barItems;
 
-//====== set animation=====
+  @override
+  void initState() {
+    super.initState();
+    barItems = [
+      {
+        "icon": "assets/home.svg",
+        "active_icon": "assets/home.svg",
+        "page": HomeScreen(),
+      },
+      {
+        "icon": "assets/post-1.svg",
+        "active_icon": "assets/post-1.svg",
+        "page": Forum(userName: widget.userName),
+      },
+      {
+        "icon": "assets/heart.svg",
+        "active_icon": "assets/heart.svg",
+        "page": Posts(),
+      },
+      {
+        "icon": "assets/profile.svg",
+        "active_icon": "assets/profile.svg",
+        "page": ProfileScreen(userName: widget.userName),
+      },
+    ];
+
+    //====== set animation=====
+    _controller.forward();
+  }
+
+  //====== set animation=====
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: ANIMATED_BODY_MS),
     vsync: this,
@@ -48,12 +58,6 @@ class _RootAppState extends State<RootApp> with TickerProviderStateMixin {
     parent: _controller,
     curve: Curves.fastOutSlowIn,
   );
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.forward();
-  }
 
   @override
   void dispose() {
@@ -74,7 +78,7 @@ class _RootAppState extends State<RootApp> with TickerProviderStateMixin {
     _controller.forward();
   }
 
-//====== end set animation=====
+  //====== end set animation=====
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +86,7 @@ class _RootAppState extends State<RootApp> with TickerProviderStateMixin {
       backgroundColor: AppColor.appBgColor,
       body: _buildPage(),
       floatingActionButton: _buildBottomBar(),
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
     );
   }
 

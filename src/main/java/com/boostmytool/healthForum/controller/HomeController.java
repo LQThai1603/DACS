@@ -239,8 +239,8 @@ public class HomeController {
 		return "/home/postInformation";
 	}
 	
-	@PostMapping("viewPost")
-	public String viewPosts(Model model,@RequestParam Long id /*idPost*/, RedirectAttributes redirectAttributes,
+	@PostMapping("viewPost") //create Comment
+	public String createComment(Model model,@RequestParam Long id /*idPost*/, RedirectAttributes redirectAttributes,
 			@Valid @ModelAttribute Comment cm,
 			BindingResult result) {
 		redirectAttributes.addAttribute("id",id);
