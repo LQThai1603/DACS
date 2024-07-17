@@ -36,7 +36,7 @@ class _RootAppState extends State<RootApp> with TickerProviderStateMixin {
       {
         "icon": "assets/heart.svg",
         "active_icon": "assets/heart.svg",
-        "page": Posts(),
+        "page": Posts(userName: widget.userName),
       },
       {
         "icon": "assets/profile.svg",

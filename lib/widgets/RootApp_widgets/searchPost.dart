@@ -1,4 +1,5 @@
 import 'package:dacs/models/postModel.dart';
+import 'package:dacs/widgets/RootApp_widgets/comment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -41,9 +42,9 @@ class _SearchpostState extends State<Searchpost> {
   Future<List<Postmodel>> searchPosts(String query) async {
     // Construct the API endpoint based on the query type
     String url = '';
-    if (query.length >= 1) {
+    if (query.contains('@')) {
       url = 'http://192.168.100.107:8080/api/show/posts/user/$query';
-    } else if (query.length >= 1) {
+    } else if (query.length > 3) {
       url = 'http://192.168.100.107:8080/api/show/posts/title/$query';
     } else {
       url = 'http://192.168.100.107:8080/api/show/posts/content/$query';
@@ -121,12 +122,92 @@ class _SearchpostState extends State<Searchpost> {
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
                       final post = posts[index];
-                      return ListTile(
-                        title: Text(post.title),
-                        subtitle: Text(post.content),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            'http://192.168.100.107:8080/api/show/avatar${post.avatar}',
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 1.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: Colors.grey[200],
+                        ),
+                        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        'http://192.168.100.107:8080/api/show/avatar${post.avatar}'),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(left: 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('${post.userNameProfile}'),
+                                        Text(post.time),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                post.title,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              Text(post.content),
+                              SizedBox(height: 10),
+                              Image.network(
+                                "http://192.168.100.107:8080/api/show/postImage${post.image}",
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                color: Colors.white,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.thumb_up,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CommentPost(
+                                              postId: post.id.toString(),
+                                              userName: widget.userName,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.comment,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            'Comment',
+                                            style: TextStyle(color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );

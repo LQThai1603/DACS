@@ -170,7 +170,7 @@ public class APIController {
 		List<Comment> c = Crepo.findByFieldIdPost(idPost);
 		return ResponseEntity.ok(c);
 	}
-	
+
 	
 	@GetMapping("show/postImage{FileImage}")
 	public ResponseEntity<byte[]> getPostImage(@PathVariable String FileImage){
@@ -222,6 +222,7 @@ public class APIController {
 				String fileName = generateFileName(image);
 				Files.copy(image.getInputStream(), Paths.get(uploadDir + fileName), StandardCopyOption.REPLACE_EXISTING);
 				post.setImage(fileName);
+				
 			}
 
 			// Đặt thời gian và avatar từ postDto
@@ -237,7 +238,6 @@ public class APIController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
 
 
 	private String generateFileName(MultipartFile multiPart) {

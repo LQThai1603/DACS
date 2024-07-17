@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dacs/Screens/Home/Forum.dart';
 import 'package:dacs/models/profileModel.dart';
+import 'package:dacs/widgets/RootApp_widgets/wallPerson.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,15 +11,15 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
-class CreatePost extends StatefulWidget {
+class CreatePostPrivate extends StatefulWidget {
   final String userName;
-  const CreatePost({Key? key, required this.userName}) : super(key: key);
+  const CreatePostPrivate({Key? key, required this.userName}) : super(key: key);
 
   @override
-  _CreatePostState createState() => _CreatePostState();
+  _CreatePostPrivateState createState() => _CreatePostPrivateState();
 }
 
-class _CreatePostState extends State<CreatePost> {
+class _CreatePostPrivateState extends State<CreatePostPrivate> {
   File? imageFile;
   late final TextEditingController _titleTextEditingController;
   late final TextEditingController _contentTextEditingController;
@@ -72,7 +73,7 @@ class _CreatePostState extends State<CreatePost> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Forum(userName: widget.userName),
+            builder: (context) => Wallperson(userName: widget.userName),
           ),
         );
       } else {

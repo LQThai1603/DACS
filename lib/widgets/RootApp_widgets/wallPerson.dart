@@ -1,14 +1,16 @@
-import 'package:dacs/widgets/RootApp_widgets/comment.dart';
+import 'package:dacs/Screens/Home/profile.dart';
+import 'package:dacs/widgets/RootApp_widgets/createPostPrivate.dart';
 import 'package:dacs/widgets/RootApp_widgets/editPost.dart';
 import 'package:flutter/material.dart';
 import 'package:dacs/models/postModel.dart';
 import 'package:dacs/models/profileModel.dart';
-import 'package:dacs/widgets/RootApp_widgets/createPost.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class Wallperson extends StatefulWidget {
   final String userName;
+
   const Wallperson({Key? key, required this.userName}) : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class _WallpersonState extends State<Wallperson> {
 
   Future<List<Postmodel>> getPostsProfile() async {
     final response = await http.get(
-        Uri.parse('http://192.168.100.107:8080/api/show/posts/${widget.userName}'));
+        Uri.parse('http://192.168.100.107:8080/api/show/posts/user/${widget.userName}'));
 
     if (response.statusCode == 200) {
       try {
@@ -36,7 +38,7 @@ class _WallpersonState extends State<Wallperson> {
         List<Postmodel> posts = jsonData.map((e) => Postmodel.fromJson(e)).toList();
         return posts;
       } catch (e) {
-        print('Error parsing JSON: $e');
+        print('Error parsing JSON for posts: $e');
         throw Exception('Failed to parse posts');
       }
     } else {
@@ -46,8 +48,8 @@ class _WallpersonState extends State<Wallperson> {
   }
 
   Future<ProfileModel> _fetchProfile() async {
-    final response = await http.get(Uri.parse(
-        'http://192.168.100.107:8080/api/show/profile/${widget.userName}'));
+    final response = await http.get(
+        Uri.parse('http://192.168.100.107:8080/api/show/profile/${widget.userName}'));
 
     if (response.statusCode == 200) {
       try {
@@ -55,10 +57,11 @@ class _WallpersonState extends State<Wallperson> {
         ProfileModel profile = ProfileModel.fromJson(jsonData);
         return profile;
       } catch (e) {
-        print('Error parsing JSON: $e');
+        print('Error parsing JSON for profile: $e');
         throw Exception('Failed to parse profile');
       }
     } else {
+      print('Server responded with status code: ${response.statusCode}');
       throw Exception('Failed to load profile');
     }
   }
@@ -91,7 +94,6 @@ class _WallpersonState extends State<Wallperson> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +124,7 @@ class _WallpersonState extends State<Wallperson> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CreatePost(userName: widget.userName),
+                            builder: (context) => CreatePostPrivate(userName: widget.userName),
                           ),
                         );
                       },
@@ -184,7 +186,7 @@ class _WallpersonState extends State<Wallperson> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => CreatePost(userName: widget.userName),
+                                            builder: (context) => CreatePostPrivate(userName: widget.userName),
                                           ),
                                         );
                                       },
@@ -214,7 +216,7 @@ class _WallpersonState extends State<Wallperson> {
                                   SizedBox(width: 8),
                                   IconButton(
                                     onPressed: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => CreatePost(userName: widget.userName),),);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => CreatePostPrivate(userName: widget.userName),),);
                                     },
                                     icon: Icon(Icons.photo_library, color: Colors.green),
                                   ),
@@ -271,7 +273,7 @@ class _WallpersonState extends State<Wallperson> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text('${post.userNameProfile}'),
-                                                  Text(post.time),
+                                                  Text(parseDateString(post.time)),
                                                 ],
                                               ),
                                             ),
@@ -318,64 +320,18 @@ class _WallpersonState extends State<Wallperson> {
                                               ),
                                             ),
                                           ],
-                                          icon: Icon(Icons.more_vert),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      post.title,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold, fontSize: 18),
-                                    ),
-                                    Text(post.content),
-                                    SizedBox(height: 10),
-                                    Image.network(
-                                      "http://192.168.100.107:8080/api/show/postImage${post.image}",
-                                      fit: BoxFit.cover,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Container(
-                                      color: Colors.white,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.thumb_up,
-                                              color: Colors.blue,
-                                            ),
-                                            onPressed: () {},
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => CommentPost(
-                                                    postId: post.id.toString(),
-                                                    userName: widget.userName,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.comment,
-                                                  color: Colors.grey,
-                                                ),
-                                                SizedBox(width: 5),
-                                                Text(
-                                                  'Comment',
-                                                  style: TextStyle(color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                    SizedBox(height: 8),
+                                    Text('${post.content}'),
+                                    SizedBox(height: 8),
+                                    if (post.image != null)
+                                      Image.network(
+                                        'http://192.168.100.107:8080/api/show/postImage${post.image}',
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -393,5 +349,11 @@ class _WallpersonState extends State<Wallperson> {
         ],
       ),
     );
+  }
+
+  String parseDateString(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
+    return formattedDate;
   }
 }

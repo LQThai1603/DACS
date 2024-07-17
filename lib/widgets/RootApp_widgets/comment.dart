@@ -1,3 +1,4 @@
+import 'package:dacs/Screens/Home/posts.dart';
 import 'package:dacs/models/profileModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -297,6 +298,7 @@ class _CommentPostState extends State<CommentPost> {
                     if (commentContent.isNotEmpty) {
                       try {
                         ProfileModel profile = await futureProfile;
+                        Postmodel post = await futurePost;
                         createComment(commentContent, profile);
                         _commentController.clear();
                       } catch (e) {
