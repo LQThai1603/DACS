@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -22,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -114,6 +118,45 @@ public class APIController {
 		List<Post> posts = Porepo.findAll();
 		return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 	}
+
+	@GetMapping("/show/posts/user/{userNameProfile}")
+    public ResponseEntity<List<Post>> getFilteredPosts(@PathVariable String userNameProfile) {
+        List<Post> allPosts = Porepo.findAll();
+        List<Post> filteredPosts = allPosts.stream()
+                .filter(post -> post.getUserNameProfile().equals(userNameProfile)) // Lọc theo userNameProfile hoặc bất kỳ thuộc tính nào
+                .collect(Collectors.toList());
+
+        if (filteredPosts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(filteredPosts, HttpStatus.OK);
+    }
+
+	@GetMapping("/show/posts/title/{title}")
+    public ResponseEntity<List<Post>> getTitlePosts(@PathVariable String title) {
+        List<Post> allPosts = Porepo.findAll();
+        List<Post> filteredPosts = allPosts.stream()
+                .filter(post -> post.getTitle().equals(title)) // Lọc theo userNameProfile hoặc bất kỳ thuộc tính nào
+                .collect(Collectors.toList());
+
+        if (filteredPosts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(filteredPosts, HttpStatus.OK);
+    }
+
+	@GetMapping("/show/posts/content/{content}")
+    public ResponseEntity<List<Post>> getContentPosts(@PathVariable String content) {
+        List<Post> allPosts = Porepo.findAll();
+        List<Post> filteredPosts = allPosts.stream()
+                .filter(post -> post.getContent().equals(content)) // Lọc theo userNameProfile hoặc bất kỳ thuộc tính nào
+                .collect(Collectors.toList());
+
+        if (filteredPosts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(filteredPosts, HttpStatus.OK);
+    }
 	
 	@GetMapping("show/post/{idPost}")
 	public ResponseEntity<Post> getPostById(@PathVariable long idPost){
@@ -121,11 +164,13 @@ public class APIController {
 		return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
+
 	@GetMapping("show/comments/{idPost}") //lấy tất cả comment đã tồn tại trong bài post có id là idPost
 	public ResponseEntity<List<Comment>> getComments(@PathVariable long idPost){
 		List<Comment> c = Crepo.findByFieldIdPost(idPost);
 		return ResponseEntity.ok(c);
 	}
+	
 	
 	@GetMapping("show/postImage{FileImage}")
 	public ResponseEntity<byte[]> getPostImage(@PathVariable String FileImage){
@@ -270,37 +315,38 @@ public class APIController {
 	}
 
 	
-	@PostMapping("edit/post/{id}")
+	@PutMapping("edit/post/{id}")
 	public ResponseEntity<Post> updatePost(@PathVariable long id, 
-			@Valid @RequestBody PostDto postDto,
-			@Valid @RequestBody String avatar,
+			@Valid @ModelAttribute PostDto postDto,
 			RedirectAttributes redirectAttributes){
 		
 		String upLoadDir = "public/post/";
 		
 		Post p = new Post();
-	
+
 		p.setId(id);
 		p.setContent(postDto.getContent());
 		if(postDto.getImage() != null) {
 			MultipartFile postImage = postDto.getImage();
 			try(InputStream inputStream = postImage.getInputStream()){
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-				Files.copy(inputStream, Paths.get(upLoadDir + p.getUserNameProfile()+ " " + LocalDateTime.now().format(formatter).toString() + ".png"), StandardCopyOption.REPLACE_EXISTING);
-				p.setImage(p.getUserNameProfile() + " " + LocalDateTime.now().format(formatter).toString() + ".png");
+				String originalFileName = postImage.getOriginalFilename();
+				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+				String fileName = postDto.getUserNameProfile().toLowerCase() + " " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + extension;
+				Files.copy(postImage.getInputStream(), Paths.get(upLoadDir + fileName), StandardCopyOption.REPLACE_EXISTING);
+				p.setImage(fileName);
 			} 
 			catch(Exception e) {
 				System.out.println(e.getMessage());
 			}
 		}
 		p.setTitle(postDto.getTitle());
-		
-		
+
 		Porepo.updateByIdPost(id, p.getTitle(), p.getContent(), p.getImage());
 		Post updatePost = Porepo.findById(id).get();
-		
+
 		return ResponseEntity.ok(updatePost);
 	}
+
 	
 	@PostMapping("delete/account/{userName}")
 	public ResponseEntity<String> deleteAccount(@PathVariable String userName){
@@ -324,7 +370,7 @@ public class APIController {
 		return ResponseEntity.ok("Account and related data deleted successfully.");
 	}
 	
-	@PostMapping("delete/post/{id}")
+	@DeleteMapping("delete/post/{id}")
 	public ResponseEntity<String> deletePost(@PathVariable long id){
 		Post p = Porepo.findById(id).get();
 		

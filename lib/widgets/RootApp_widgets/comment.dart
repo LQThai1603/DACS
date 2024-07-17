@@ -96,10 +96,9 @@ class _CommentPostState extends State<CommentPost> {
   }
 
   Future<void> createComment(String content, ProfileModel profile) async {
+    ProfileModel profiles = await futureProfile;
     final Map<String, dynamic> data = {
-      'avatar': profile.avatar.isNotEmpty && profile.avatar != 'default.png'
-          ? 'http://192.168.100.107:8080/api/show/avatar/${profile.avatar}'
-          : 'default.png',
+      'avatar': profiles.avatar,
       'content': content,
       'idPost': widget.postId,
       'userNameProfile': widget.userName,

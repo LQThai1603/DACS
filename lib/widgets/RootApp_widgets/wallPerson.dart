@@ -1,3 +1,5 @@
+import 'package:dacs/widgets/RootApp_widgets/comment.dart';
+import 'package:dacs/widgets/RootApp_widgets/editPost.dart';
 import 'package:flutter/material.dart';
 import 'package:dacs/models/postModel.dart';
 import 'package:dacs/models/profileModel.dart';
@@ -20,13 +22,13 @@ class _WallpersonState extends State<Wallperson> {
   @override
   void initState() {
     super.initState();
-    futurePosts = getAllPosts();
+    futurePosts = getPostsProfile();
     futureProfile = _fetchProfile();
   }
 
-  Future<List<Postmodel>> getAllPosts() async {
+  Future<List<Postmodel>> getPostsProfile() async {
     final response = await http.get(
-        Uri.parse('http://192.168.100.107:8080/api/show/posts'));
+        Uri.parse('http://192.168.100.107:8080/api/show/posts/${widget.userName}'));
 
     if (response.statusCode == 200) {
       try {
@@ -61,6 +63,35 @@ class _WallpersonState extends State<Wallperson> {
     }
   }
 
+  Future<void> deletePost(String postId, BuildContext context) async {
+    final url = 'http://192.168.100.107:8080/api/delete/post/$postId';
+
+    try {
+      final response = await http.delete(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print('Post deleted successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Post deleted successfully')),
+        );
+        setState(() {
+          futurePosts = getPostsProfile();
+        });
+      } else {
+        print('Failed to delete post. Status code: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete post. Status code: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print('Error deleting post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting post: $e')),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +113,7 @@ class _WallpersonState extends State<Wallperson> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  title: Text('Wall'),
+                  title: Text('Trang cá nhân'),
                   centerTitle: false,
                   actions: [
                     IconButton(
@@ -196,22 +227,165 @@ class _WallpersonState extends State<Wallperson> {
                     },
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      // Replace with actual post data
-                      return ListTile(
-                        title: Text('Post Title'),
-                        subtitle: Text('Post Content'),
-                        leading: CircleAvatar(
-                          backgroundImage: AssetImage(
-                            'assets/imagePerson.jpg', // Replace with actual URL
-                          ),
+                FutureBuilder<List<Postmodel>>(
+                  future: futurePosts,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SliverToBoxAdapter(
+                          child: Center(child: CircularProgressIndicator()));
+                    } else if (snapshot.hasError) {
+                      return SliverToBoxAdapter(
+                          child: Center(child: Text('Failed to load posts: ${snapshot.error}')));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return SliverToBoxAdapter(
+                          child: Center(child: Text('No posts available')));
+                    } else {
+                      final posts = snapshot.data!.reversed.toList(); // Đảo ngược danh sách các bài đăng
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                            final post = posts[index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey, width: 1.0),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.grey[200],
+                              ),
+                              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                color: Colors.white,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage('http://192.168.100.107:8080/api/show/avatar${post.avatar}'),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(left: 5),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('${post.userNameProfile}'),
+                                                  Text(post.time),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Spacer(), // Thêm Spacer để đẩy nút vào cạnh phải
+                                        PopupMenuButton<String>(
+                                          onSelected: (String result) {
+                                            switch (result) {
+                                              case 'edit':
+                                              // Thực hiện hành động sửa
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => Editpost(userName: widget.userName, postId: post.id.toString()),
+                                                  ),
+                                                );
+                                                break;
+                                              case 'delete':
+                                              // Thực hiện hành động xóa
+                                                deletePost(post.id.toString(), context);
+                                                break;
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                            PopupMenuItem<String>(
+                                              value: 'edit',
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.edit, color: Colors.blue),
+                                                  SizedBox(width: 10),
+                                                  Text('Sửa'),
+                                                ],
+                                              ),
+                                            ),
+                                            PopupMenuItem<String>(
+                                              value: 'delete',
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.delete, color: Colors.red),
+                                                  SizedBox(width: 10),
+                                                  Text('Xóa'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                          icon: Icon(Icons.more_vert),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      post.title,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold, fontSize: 18),
+                                    ),
+                                    Text(post.content),
+                                    SizedBox(height: 10),
+                                    Image.network(
+                                      "http://192.168.100.107:8080/api/show/postImage${post.image}",
+                                      fit: BoxFit.cover,
+                                    ),
+                                    SizedBox(height: 10),
+                                    Container(
+                                      color: Colors.white,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.thumb_up,
+                                              color: Colors.blue,
+                                            ),
+                                            onPressed: () {},
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => CommentPost(
+                                                    postId: post.id.toString(),
+                                                    userName: widget.userName,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.comment,
+                                                  color: Colors.grey,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  'Comment',
+                                                  style: TextStyle(color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          childCount: posts.length,
                         ),
                       );
-                    },
-                    childCount: 10, // Replace with actual number of posts
-                  ),
+                    }
+                  },
                 ),
               ],
             ),
