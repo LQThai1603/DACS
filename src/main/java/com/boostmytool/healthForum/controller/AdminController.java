@@ -330,6 +330,7 @@ public class AdminController {
 				e.printStackTrace();
 			}
 		}
+
 		
 		if(oleAvatar.equals("default.png") && !profile.getAvatar().equals("default.png")) {
 			List<Post> posts = Porepo.findByUserNameProfile(profile.getUserNameProfile());
