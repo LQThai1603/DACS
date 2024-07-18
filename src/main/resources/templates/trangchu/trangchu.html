@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diễn Đàn Sức Khỏe</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="styles_trangchu.css">
+
+</head>
+<body>
+    <!-- Header -->
+        <header class="bg-light py-3">
+            <div class="container d-flex justify-content-between align-items-center">
+                <img src="Image/diendan.png" alt="Diễn Đàn Sức Khỏe" class="logo">
+                <div class="d-flex">
+                    <button class="btn btn-primary mr-2">Đăng Nhập</button>
+                    <button class="btn btn-secondary">Đăng Ký</button>
+                </div>
+            </div>
+        </header>
+
+    <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary pt-0 pb-0">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item" style="background-color:rgba(255, 255, 255, 0.3);
+                                            border-radius: 0.25rem;">
+                            <a style="margin-right: 0px" class="navbar-brand" href="#" onclick="goToIndex();">Trang Chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="navbar-brand" href="#">Diễn Đàn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a onclick="goToAbout(event);" class="navbar-brand" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    <!-- Main content -->
+    <main class="container my-4">
+
+    <!-- First Blog -->
+        <div class="row mt-4">
+            <div class="col-md-9">
+                <h3 class="chiase_h3">Giới thiệu chung</h3>              
+                <div class="forum-section">                 
+                    <div class="list-group">
+                        <a href="page_intro.html" class="list-group-item list-group-item-action">
+                        <h5>Thông báo - nội quy</h5>
+                        <div class="category-divider"></div>
+                            <strong>Nội Quy Diễn Đàn Sức Khỏe (Điều Khoản Sử Dụng)</strong>
+                            <p>Diễn Đàn Sức Khỏe - Vì sức khỏe cộng đồng là nơi tập trung kiến thức mở về sức khỏe...</p>
+                        </a>
+                        
+                    </div>
+                </div>
+                <div class="forum-section">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <h5>Đóng góp thêm cho diễn đàn</h5>
+                            <div class="category-divider"></div>
+                            <strong>Góp ý - Trợ giúp</strong>
+                            <p>Nội dung góp ý và trợ giúp...</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-3">
+            <h3 class="chiase_h3">Tìm thứ bạn cần</h3>
+                <div class="lefcol">
+                <div class="search-bar mb-4">
+                    <input type="text" class="form-control" placeholder="Bạn cần tìm gì?">
+                </div>
+                <div class="tag-cloud">
+                    <h5>#tags diễn đàn</h5>
+                    <div class="d-flex flex-wrap">
+                        <a href="#" class="badge badge-pill badge-primary m-1">buồn nôn</a>
+                        <a href="#" class="badge badge-pill badge-secondary m-1">giảm cân sau sinh</a>
+                        <a href="#" class="badge badge-pill badge-success m-1">spa chăm sóc sau sinh</a>
+                        <a href="#" class="badge badge-pill badge-info m-1">đau ngực</a>
+                        <a href="#" class="badge badge-pill badge-info m-1">đau bụng dưới</a>
+                        <a href="#" class="badge badge-pill badge-primary m-1">khó thở</a>
+                        <a href="#" class="badge badge-pill badge-success m-1">khó tăng cân</a>
+                        <a href="#" class="badge badge-pill badge-secondary m-1">Viêm lộ tuyến cổ tử cung</a>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+    <!-- Slider -->
+        <div class="row mt-3">
+            <div class="col-md-9">
+            <h3 class="chiase_h3">Tiêu điểm</h3>
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="Image/thucpham-slider.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <a href="#"><h5>Dinh dưỡng như nào mới tốt nhất cho sức khỏe</h5></a>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="Image/uongsua-slider.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                            <a href="#"><h5>Bổ sung sữa cho trẻ như nào mới đúng cách?</h5></a>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="Image/roiloan-slider.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                            <a href="#"><h5>Rối loạn tâm thần tuổi vị thành niên: Vấn đề đáng lo ngại</h5></a>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Right Column: Advertisement and Form -->
+            <div class="col-md-3">
+                <h3 class="chiase_h3">Hỏi đáp</h3>              
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        Hỏi bác sĩ
+                    </div>
+                    <div class="card-body">
+                        <!-- Thêm phần thông báo -->
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+                            Vui lòng nhập câu hỏi trước khi gửi.
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea id="questionTextarea" class="form-control" rows="3" placeholder="Đặt câu hỏi tại đây"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button id="submitQuestionBtn" class="btn btn-success">Gửi câu hỏi</button>
+                        </div>
+                        <!-- Thông báo gửi thành công -->
+                        <div id="successMessage" class="mt-3 alert alert-success d-none" role="alert">
+                            Câu hỏi của bạn đã được gửi thành công!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Góc chia sẻ -->      
+        <div class="row mt-4">
+            <div class="col-md-9">
+            <h3 class="chiase_h3">Góc chia sẻ</h3>
+            <div class="gocchiase">
+            <div class="row header-row ">
+                    <div class="col-lg-7 font-weight-bold">Mới nhất</div>
+                    <div class="col-lg-2 font-weight-bold">Lượt xem</div>
+                    <div class="col-lg-3 font-weight-bold">Ngày đăng</div>
+                </div>
+                <div class="post-divider"></div>
+                <div class="row">
+                    <div class="col-lg-7 col-post-title"><a href="#">Tất tần tật các thông tin về niềng răng bị tụt lợi</a></div>
+                    <div class="col-lg-2">341</div>
+                    <div class="col-lg-3">2022-09-19 16:28:58</div>
+                </div>
+                <div class="post-divider"></div>
+                <div class="row">
+                    <div class="col-lg-7 col-post-title"><a href="#">Bệnh tim và một số thông tin cần biết?</a></div>
+                    <div class="col-lg-2">222</div>
+                    <div class="col-lg-3">2023-05-30 15:35:03</div>
+                </div>
+                <div class="post-divider"></div>
+                <div class="row">
+                    <div class="col-lg-7 col-post-title"><a href="#">Bệnh suyễn và ô nhiễm không khí ngoài trời</a></div>
+                    <div class="col-lg-2">221</div>
+                    <div class="col-lg-3">2021-01-29 09:23:16</div>
+                </div>
+                <div class="post-divider"></div>
+                <div class="row">
+                    <div class="col-lg-7 col-post-title"><a href="#">Mô hình “CHÀO-AI-THÌ-BIẾT-ƠN” ở Bệnh viện Chợ Rẫy</a></div>
+                    <div class="col-lg-2">294</div>
+                    <div class="col-lg-3">2020-12-31 05:16:37</div>
+                </div>
+                <div class="post-divider"></div>
+                <div class="row">
+                    <div class="col-lg-7 col-post-title"><a href="#">Help! Làm sao trị dứt điểm da đầu hay ngứa, nhiều gàu?</a></div>
+                    <div class="col-lg-2">1,5K</div>
+                    <div class="col-lg-3">2024-07-15 11:26:36</div>
+                </div>
+                <div class="post-divider"></div>
+            </div>
+            </div>
+
+            <div class="col-md-3">
+                <h3 class="chiase_h3">Chuyên mục</h3>
+                <div class="lefchuyenmuc">
+                <a style="text-decoration: none;" href="#" class="category-link">Ung thư (2)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Tai Mũi Họng (4)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Nhi khoa (10)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Sản khoa (19)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Tiêu hóa (8)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Nam khoa (1)</a>
+                <div class="category-divider"></div>
+                <a href="#" class="category-link">Hô hấp (4)</a>
+                <div class="category-divider"></div>
+                </div> 
+            </div>
+        </div>
+        
+    <!-- Chủ đề hot -->
+        <div class="row mt-4">
+                <div class="col-md-9">
+                    <h3 class="chiase_h3">Chủ đề HOT</h3>
+                    <div class="row chudehot">
+                        <!-- Bài viết 1 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img class="card-img-top" src="Image/dautay.jfif" alt="Image 1">
+                                <div class="card-body">
+                                    <a href="#" class="card-title">Xin lời khuyên chữa tê bàn tay</a>
+                                    <p class="card-text">Gần đây bàn tay bên trái của em hay bị tê râm ran, cảm giác như có kim chích hay kiến bò rồi còn mỏi nhừ nữa. Mọi người cho em hỏi liệu em có nên đi khám không ạ?</p>
+                                    <p class="card-text"><small class="text-muted">Tác giả: Ngân Trần</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bài viết 2 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img class="card-img-top" src="Image/thoatvi.jfif" alt="Image 2">
+                                <div class="card-body">
+                                    <a href="#" class="card-title">Bị thoát vị đĩa đệm, phải làm sao?</a>
+                                    <p class="card-text">Em vừa đi khám, bác sĩ bảo thoát vị đĩa đệm lưng. Em lo quá định đi tập yoga nhưng không biết có cải thiện không. Nhà mình ai có kinh nghiệm xin tư vấn giúp em với ạ. Xin cám ơn</p>
+                                    <p class="card-text"><small class="text-muted">Tác giả: Ngọc Trang</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bài viết 3 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img class="card-img-top" src="Image/tieuduong.jfif" alt="Image 3">
+                                <div class="card-body">
+                                    <a href="#" class="card-title">Có cách nào chữa bệnh tiểu đường mà không dùng đến thuốc?</a>
+                                    <p class="card-text">Năm nay em 23 tuổi, phát hiện mình bị tiểu đường cách đây hơn 3 tháng, đường huyết em ở mức 7.5. Hiện tại, em đang uống thuốc nhưng em muốn hỏi thêm liệu có cách nào trị tiểu đường mà không cần dùng thuốc hay không?</p>
+                                    <p class="card-text"><small class="text-muted">Tác giả: Tuấn Kiệt</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bài viết 4 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img class="card-img-top" src="Image/daudau.jfif" alt="Image 4">
+                                <div class="card-body">
+                                    <a href="#" class="card-title">Hoa mắt, chóng mặt khi đột ngột đứng dậy là bị gì?</a>
+                                    <p class="card-text">Mình hay gặp tình trạng này, nghe nhiều người bảo là do huyết áp thấp. Nghe nói huyết áp thấp nếu không điều trị để kéo dài có thể dẫn đến thiếu máu não gây đột quỵ nữa phải không mọi người? Mình hoang mang quá</p>
+                                    <p class="card-text"><small class="text-muted">Tác giả: Đức Thanh</small></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Column: Old Posts -->
+                <div class="col-md-3">
+                    <h3 class="chiase_h3">Bài viết cũ</h3>
+                    <div class="lef-old-post">
+                        <!-- Bài viết 1 -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img class="img-old-post img-fluid" src="Image/khomat.png">
+                            </div>
+                            <div class="col-8">
+                                <a style="text-decoration: none;" href="#" class="old-post-link">Tình trạng khô mắt</a>
+                            </div>
+                        </div>
+                        <div class="category-divider"></div>
+                        <!-- Bài viết 2 -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img class="img-old-post img-fluid" src="Image/daubungkinh.png">
+                            </div>
+                            <div class="col-8">
+                                <a style="text-decoration: none;" href="#" class="old-post-link">Đau kinh nguyệt</a>
+                            </div>
+                        </div>
+                        <div class="category-divider"></div>
+                        <!-- Bài viết 3 -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img class="img-old-post img-fluid" src="Image/chayda.png">
+                            </div>
+                            <div class="col-8">
+                                <a style="text-decoration: none;" href="#" class="old-post-link">Xử lý khi da cháy nắng</a>
+                            </div>
+                        </div>
+                        <div class="category-divider"></div>
+                        <!-- Bài viết 4 -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img class="img-old-post img-fluid" src="Image/mattrinho.png">
+                            </div>
+                            <div class="col-8">
+                                <a style="text-decoration: none;" href="#" class="old-post-link">Nguyên nhân gây mất trí nhớ</a>
+                            </div>
+                        </div>
+                        <div class="category-divider"></div>
+                        <!-- Bài viết 5 -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img class="img-old-post img-fluid" src="Image/hiemmuon.png">
+                            </div>
+                            <div class="col-8">
+                                <a style="text-decoration: none;" href="#" class="old-post-link">Nam giới hiếm muộn</a>
+                            </div>
+                            <div id="successMessage" class="mt-3 alert alert-success d-none" role="alert">
+                            Câu hỏi của bạn đã được gửi thành công!
+                        </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer id ="footer" class="bg-dark text-white pt-5 pb-4">
+        <div class="container text-center text-md-left">
+            <div class="row text-center text-md-left">
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 font-weight-bold">About Us</h5>
+                    <p>Diễn đàn sức khỏe là một nền tảng trực tuyến hữu ích, nơi mọi người có thể chia sẻ, thảo luận và tìm kiếm thông tin về các vấn đề sức khỏe. Tại đây, người dùng có thể đăng bài viết để hỏi đáp, nhận được những lời khuyên từ các chuyên gia cũng như kinh nghiệm từ cộng đồng. Với sự tham gia tích cực và đa dạng của các thành viên, diễn đàn tạo ra một môi trường hỗ trợ lẫn nhau, giúp mọi người nâng cao kiến thức và chăm sóc sức khỏe tốt hơn.</p>
+                    <a href="#" class="btn btn-success">Read More</a>
+                </div>
+
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 font-weight-bold">Popular Posts</h5>
+                    <div class="media mb-3">
+                        <img src="Image/huyetap.jpg" class="mr-3" alt="Post 1" style="width:100px;">
+                        <div class="media-body">
+                            <h6 class="mt-0">Những Dấu Hiệu Của Hạ Huyết Áp</h6>
+                            <p class="text-muted">2024-06-27</p>
+                        </div>
+                    </div>
+                    <div class="media mb-3">
+                        <img src="Image/daumat.jfif" class="mr-3" alt="Post 2" style="width:100px;">
+                        <div class="media-body">
+                            <h6 class="mt-0">Vì sao bệnh mắt đỏ dễ lây lan ?</h6>
+                            <p class="text-muted">2024-07-07</p>
+                        </div>
+                    </div>
+                    <div class="media mb-3">
+                        <img src="Image/thuydau.jfif" class="mr-3" alt="Post 3" style="width:100px;">
+                        <div class="media-body">
+                            <h6 class="mt-0">Biểu Hiện Của Bệnh Thủy Đậu</h6>
+                            <p class="text-muted">2024-06-15</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 font-weight-bold">Signup to our newsletter</h5>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email...">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-light">Submit</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <hr class="mb-4">
+
+            <div class="row align-items-center">
+                <div class="col-md-7 col-lg-8">
+                    <p class="text-center text-md-left">© 2024 Blog Site | Brought to you by
+                        <a href="#" class="text-decoration-none text-light font-weight-bold">Do An Co So</a>
+                    </p>
+                </div>
+                <div class="col-md-5 col-lg-4">
+                    <div class="text-center text-md-right">
+                        <ul class="list-unstyled list-inline">
+                            <li class="list-inline-item">
+                                <a href="#" class="btn btn-outline-light btn-floating btn-sm">
+                                    <i class="fa-brands fa-facebook"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#" class="btn btn-outline-light btn-floating btn-sm">
+                                    <i class="fa-brands fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#" class="btn btn-outline-light btn-floating btn-sm">
+                                    <i class="fa-brands fa-tiktok"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#" class="btn btn-outline-light btn-floating btn-sm">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
