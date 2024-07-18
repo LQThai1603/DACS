@@ -499,4 +499,10 @@ public class AdminController {
 		Arepo.save(a);
 		return "redirect:/admin/accounts";
 	}
+	
+	@GetMapping({"forum"})
+	public String showForum(Model model) {
+		model.addAttribute("userName", account.getUserName());
+		return "/home/forum";
+	}
 }

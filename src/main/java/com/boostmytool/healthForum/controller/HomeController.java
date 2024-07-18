@@ -401,4 +401,10 @@ public class HomeController {
 	    
 		return "home/searchPost";
 	}
+	
+	@GetMapping({"forum"})
+	public String showForum(Model model) {
+		model.addAttribute("userName", account.getUserName());
+		return "/home/forum";
+	}
 }
