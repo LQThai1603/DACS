@@ -453,6 +453,19 @@ public class AdminController {
 		}
 		
 		Arepo.delete(a);
+		if(!p.getAvatar().equals("default.png")) {
+			File fileToDelete = new File("public/avatar", p.getAvatar());
+			 if (fileToDelete.exists()) {
+		            // Thực hiện xóa file
+		            if (fileToDelete.delete()) {
+		                System.out.println("File deleted successfully.");
+		            } else {
+		                System.out.println("Failed to delete the file.");
+		            }
+		        } else {
+		            System.out.println("File does not exist.");
+		        }
+		}
 		Prepo.delete(p);
 		return "redirect:/admin/accounts";
 	}

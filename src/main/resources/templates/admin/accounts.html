@@ -239,13 +239,15 @@
 
     <script>
 		function confirmDeleteAccount(userName) {
-	        if (confirm("Are you sure you want to delete this Account?")) {
-	            // Điều hướng đến phương thức xóa bài post
-	            window.location.href = "/admin/accounts/deleteaccount?userName=${account.userName}" + userName;
-	        } else {
-	            console.log("Delete canceled");
-	        }
-	    }
+		    if (confirm("Are you sure you want to delete this Account?")) {
+		        // Mã hóa userName
+		        const encodedUserName = encodeURIComponent(userName);
+		        // Điều hướng đến phương thức xóa tài khoản với userName đã mã hóa
+		        window.location.href = "/admin/accounts/deleteaccount?userName=" + encodedUserName;
+		    } else {
+		        console.log("Delete canceled");
+		    }
+		}
 		
         function showProfile(userNameProfile) {
             window.location.href = "/admin/profile?userNameProfile=" + userNameProfile;
