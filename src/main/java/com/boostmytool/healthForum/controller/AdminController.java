@@ -315,7 +315,7 @@ public class AdminController {
 		
 		Profile p = new Profile();
 		p.setUserNameProfile(profileDto.getUserNameProfile());
-		
+		p.setAvatar(p.getUserNameProfile() + ".png");		
 		String upLoadDir = "public/avatar/";
 		String oleAvatar = profile.getAvatar();
 		//save avatar
